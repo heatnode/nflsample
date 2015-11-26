@@ -1,0 +1,16 @@
+﻿<div ng-controller="LandingCtrl as landing">
+    {{ landing.title }}
+    <label for="qbSelect">Make a choice:</label>
+    <select id="qbSelect" ng-model="landing.model.selectedQB" ng-options="o as o for o in landing.qbOptions"
+            ng-change='landing.changeQB(landing.model.selectedQB)'>
+
+    </select>
+
+    <nvd3 options="landing.chart.options" data="landing.chart.data" api="landing.chart.api"></nvd3>
+
+    <div ng-repeat="qbdata in landing.gamesForYear">
+        <div class="row">
+            {{qbdata | json}}
+        </div>
+    </div>
+</div>

@@ -1,22 +1,43 @@
 ﻿<!doctype html>
 <html ng-app="MattSample">
 <head>
-</head>
-<body>
-    <div>
-        <label>Name:</label>
-        <input type="text" ng-model="yourName" placeholder="Enter a name here">
-        <hr>
-        <h1>Hello {{yourName}}!</h1>
-    </div>
-
+    <meta charset="utf-8">
     <!-- Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
+    <script src="libraries/d3.min.js"></script>
+    <script src="libraries/nv.d3.min.js"></script>
+    <script src="libraries/angular-nvd3.min.js"></script>
+    <!--Application files-->
+    <script src="services/qbDataSvc.js"></script>
+    <script src="controllers/LandingCtrl.js"></script>
 
     <!-- App Main - has Angular configuration etc -->
     <script src="main.js"></script>
-</body>
-<!-- main module -->
 
+    <link href="css/nv.d3.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="container-fluid" ng-view></div>
+
+
+</body>
 </html>
+
+<!--
+    todo:
+    use query time for progress or spinner?
+    use map/reduce for stats
+
+The goal of the project is to create a visual and interactive display for an MLB batter's or NFL
+quarterback's performance over time.
+• For the NFL data set, we're interested in seeing two derived rate stats (Yd/Att and Cmp%)
+displayed over time for each quarterback. We are also interested in seeing some of the
+counting stats (some of which are used to calculate the rate stats) displayed in the UI as well. In
+the JSON data, we provide: Att, Cmp, Sack, Int, PsYds, PsTD, Rush, RshYds, and RshTD.
+
+• You do not need to create a comparison UI, it's sufficient for this project to display the data
+for each batter or each quarterback one at a time on separate pages.
+        
+-->
