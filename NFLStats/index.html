@@ -10,8 +10,10 @@
     <script src="libraries/angular-nvd3.min.js"></script>
     <!--Application files-->
     <script src="services/qbDataSvc.js"></script>
+    <script src="services/transformSvc.js"></script>
+    <script src="services/chartSvc.js"></script>
     <script src="controllers/LandingCtrl.js"></script>
-
+    
     <!-- App Main - has Angular configuration etc -->
     <script src="main.js"></script>
 
@@ -29,6 +31,11 @@
     todo:
     use query time for progress or spinner?
     use map/reduce for stats
+    maybe have two sub controllers
+    --chart or charts
+    --grid
+    when dropdown is changed, variious sub controllers get messaged about it and do their thing
+
 
 The goal of the project is to create a visual and interactive display for an MLB batter's or NFL
 quarterback's performance over time.

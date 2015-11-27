@@ -3,14 +3,25 @@
     <label for="qbSelect">Make a choice:</label>
     <select id="qbSelect" ng-model="landing.model.selectedQB" ng-options="o as o for o in landing.qbOptions"
             ng-change='landing.changeQB(landing.model.selectedQB)'>
-
     </select>
+    <br />
+    <select ng-model="landing.model.selectedYear" ng-options="o as o for o in landing.yearOptions"
+            ng-change='landing.changeYear(landing.model.selectedYear)'></select>
 
     <nvd3 options="landing.chart.options" data="landing.chart.data" api="landing.chart.api"></nvd3>
-
-    <div ng-repeat="qbdata in landing.gamesForYear">
-        <div class="row">
-            {{qbdata | json}}
-        </div>
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <!--todo: obviously clean this index stuff up to be a proper object-->
+                <th ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="header in landing.headers track by $index">
+                    {{ header.label }}
+                </th>
+            </tr>
+        </thead>
+        <tr ng-repeat="row in landing.gamesForYear">
+            <td ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="cell in row track by $index">
+                {{ cell }}
+            </td>
+        </tr>
+    </table>
 </div>
