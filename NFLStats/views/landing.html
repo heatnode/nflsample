@@ -1,27 +1,53 @@
 ﻿<div ng-controller="LandingCtrl as landing">
-    {{ landing.title }}
-    <label for="qbSelect">Make a choice:</label>
-    <select id="qbSelect" ng-model="landing.model.selectedQB" ng-options="o as o for o in landing.qbOptions"
-            ng-change='landing.changeQB(landing.model.selectedQB)'>
-    </select>
-    <br />
-    <select ng-model="landing.model.selectedYear" ng-options="o as o for o in landing.yearOptions"
-            ng-change='landing.changeYear(landing.model.selectedYear)'></select>
+    <div class="row">
+        <div class="col-xs-12">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="qbSelect">QB to review:</label>
+                    <select id="qbSelect" ng-model="landing.model.selectedQB" ng-options="o as o for o in landing.qbOptions"
+                            ng-change='landing.changeQB(landing.model.selectedQB)'></select>
+                </div>
+                <div class="form-group">
+                    <label >year:</label>
+                    <select ng-model="landing.model.selectedYear" ng-options="o as o for o in landing.yearOptions"
+                            ng-change='landing.changeYear(landing.model.selectedYear)'></select>
+                </div>
+                <div class="form-group">
+                    <label>Chart Type:</label>
+                    <select ng-model="landing.model.selectedType" ng-options="o as o for o in landing.chartOptions"></select>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <img class="img-responsive img-circle" ng-src="{{landing.qbImgSrc || ''}}" alt="{{ landing.model.selectedQB }}"/>
+            <div ng-if="landing.model.selectedQB"> some other stuff here</div>
+        </div>
+        <div class="col-sm-10">
+            <nvd3 options="landing.chart.options" data="landing.chart.data" api="landing.chart.api"></nvd3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <!--todo: obviously clean this index stuff up to be a proper object-->
+                        <th ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="header in landing.headers track by $index">
+                            {{ header.label }}
+                        </th>
+                    </tr>
+                </thead>
+                <tr ng-repeat="row in landing.gamesForYear">
+                    <td ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="cell in row track by $index">
+                        {{ cell }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-    <nvd3 options="landing.chart.options" data="landing.chart.data" api="landing.chart.api"></nvd3>
-    <table>
-        <thead>
-            <tr>
-                <!--todo: obviously clean this index stuff up to be a proper object-->
-                <th ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="header in landing.headers track by $index">
-                    {{ header.label }}
-                </th>
-            </tr>
-        </thead>
-        <tr ng-repeat="row in landing.gamesForYear">
-            <td ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="cell in row track by $index">
-                {{ cell }}
-            </td>
-        </tr>
-    </table>
+    
+
 </div>

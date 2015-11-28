@@ -7,15 +7,13 @@
 
     var service = {
         gamesForYear: gamesForYear,
-        gameRowsAsObjects:gameRowsAsObjects,
         years: years
     };
 
     function gamesForYear(games, year) {
         //todo: fix hardcoded row index ref
-        return $filter('filter')(games, function (row) { return row[3] == year; })
+        return $filter('filter')(games, function (game) { return game['seasonYear'] == year; })
     }
-
 
 
     return service;
