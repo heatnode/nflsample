@@ -1,14 +1,13 @@
-﻿var LandingCtrl = function ($scope, qbData, transform, charts) {
+﻿var QBPerformanceCtrl = function ($scope, qbData, transform, charts) {
 
     var self = this; //for controller as syntax later
     //use "controller as" syntax
 
     self.model = {
-        title: 'there are those who call me landing',
         //todo: fix hardcode
         selectedQB: qbData.selectedQB, 
         selectedYear: '2011',
-        selectedType: 'cmpOverAttempts'
+        selectedType: 'cmpPctLine'
     };
 
     self.headers = [];
@@ -17,7 +16,7 @@
     self.chartOptions = charts.charts;
 
     self.games = [];
-    self.chart = charts.getChart('cmpOverAttempts');
+    self.chart = charts.getChart(self.model.selectedType);
 
     self.changeQB = function (qb) {
         qbData.setQB(qb).then(function (result) {
@@ -25,7 +24,6 @@
             self.headers = result.header;
             self.qbImgSrc = result.qbImgSrc;
             self.gamesForYear = transform.gamesForYear(self.games, self.model.selectedYear);
-
             charts.updateChart(self.chart, self.gamesForYear);
         });
     }
@@ -36,6 +34,7 @@
             charts.updateChart(self.chart, self.gamesForYear);
         }
     }
+
 
     $scope.$watch(
             function watchSelections(scope) {
@@ -73,4 +72,4 @@
 
 // The $inject property of every controller (and pretty much every other type of object in Angular) 
 // needs to be a string array equal to the controllers arguments, only as strings
-LandingCtrl.$inject = ['$scope', 'qbDataSvc', 'transformSvc', 'chartSvc'];
+QBPerformanceCtrl.$inject = ['$scope', 'qbDataSvc', 'transformSvc', 'chartSvc'];

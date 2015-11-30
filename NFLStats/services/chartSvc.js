@@ -7,14 +7,21 @@
         updateChart: updateChartData
         //change: change
     }
+    
+    var defaultOptions = { 
+        noData:"Please select a quarterback"
+    }
+
     var chartTypeDefs = {
         cmpOverAttempts: { 
             updateDataFn: updateCmpOverAtt,
             options: {
                 chart: {
+                    noData: defaultOptions.noData, //todo, merge etc
                     type: 'multiBarChart',
                     height: 450,
                     stacked: true,
+                    //stackOffset:"expand",
                     margin: {
                         top: 20,
                         right: 20,
@@ -58,6 +65,14 @@
                     valueFormat: function (d) {
                         return d3.format(',.2f')(d);
                     },
+                    interactiveLayer: {
+                        tooltip:{
+                            contentGenerator: function (data) {
+                                console.log(data);
+                                    return 'this is my custom content';
+                                }
+                            }
+                    },
                     useInteractiveGuideline: true,
                     dispatch: {
                         stateChange: function (e) { console.log("stateChange"); },
@@ -65,11 +80,13 @@
                         tooltipShow: function (e) { console.log("tooltipShow"); },
                         tooltipHide: function (e) { console.log("tooltipHide"); }
                     },
+                    forceX:[0],
                     xAxis: {
                         axisLabel: 'Week'
+                        //tickValues: [0, 1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15,16,17,18]
                     },
                     yAxis: {
-                        axisLabel: 'Completion Percentage',
+                        axisLabel: 'Completion %',
                         axisLabelDistance: -10
                     },
                     callback: function (chart) {
@@ -102,6 +119,8 @@
 
     service.charts = Object.keys(chartTypeDefs);
 
+    return service;  
+
     function getChart(statChartType) {
         var chart = {
             data: [],
@@ -123,8 +142,8 @@
 
     function updateCmpPctLine(games) {
         var cmpPctSeries = {
-            key: "Completion Percentage",
-            values: []
+            key: "Completion %",
+            values: [] //intial value to move the line off Y axis
         };
 
         games.forEach(function (game) {
@@ -173,7 +192,7 @@
         return [cmpSeries, attmpSeries];
     }
 
-    return service;
+
 
 };
 

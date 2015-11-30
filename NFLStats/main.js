@@ -3,7 +3,7 @@
 MattSample.factory('qbDataSvc', qbDataSvc);
 MattSample.factory('transformSvc', transformSvc);
 MattSample.factory('chartSvc', chartSvc);
-MattSample.controller('LandingCtrl', LandingCtrl);
+MattSample.controller('QBPerformanceCtrl', QBPerformanceCtrl);
 //MattSample.controller('ChartCtrl', ChartCtrl);
 MattSample.filter('firstUpper', function () {
     return function (input, scope) {
@@ -14,14 +14,14 @@ MattSample.filter('firstUpper', function () {
 
 var configFunction = function ($routeProvider) {
     $routeProvider.
-        when('/landing', {
-            templateUrl: 'views/landing.html',
+        when('/qbperf', {
+            templateUrl: 'views/qbperformance.html',
         })
         .when('/test', {
             templateUrl: 'views/testzone.html',
         })
         .otherwise({
-            redirectTo: 'landing'
+            redirectTo: 'qbperf'
         });
 }
 configFunction.$inject = ['$routeProvider'];
