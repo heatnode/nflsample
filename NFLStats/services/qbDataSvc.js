@@ -1,4 +1,4 @@
-﻿var qbDataSvc = function ($http, $rootScope, $q) {
+﻿var qbDataSvc = function ($http, $rootScope, stats, transform) {
 
     var qbDataSources = {
         "Tom Brady": "nfl-1870523.json",
@@ -22,15 +22,17 @@
     function loadData(datasetFile) {
         var url = 'json/' + datasetFile;
         return $http.get(url).then(function (result) {
-
             var dataset = {
                 header: result.data.header,
-                games: gameRowsAsObjects(result.data.rows, result.data.header)
+                games: gameRowsAsObjects(result.data.rows, result.data.header),
+                gamerows:result.data.rows
             }
-            //decorate dataset with new stats
-            AddCmpPctToDataSet(dataset);
-            AddYdsPerAttToDataSet(dataset);
-            dataset.qbImgSrc = dataset.games[0].playerImage;
+            //debugger;
+            //decorate dataset with new stats and lookup
+            transform.addLookup(dataset);
+            stats.AddCmpPctToDataSet(dataset);
+            stats.AddYdsPerAttToDataSet(dataset);
+            dataset.qbImgSrc = dataset.val(dataset.gamerows[0],"playerImage");
             service.dataset = dataset;
             $rootScope.$broadcast('qbDataSvc:updated');
             return service.dataset;
@@ -39,36 +41,7 @@
         });
     }
 
-    //todo: consider if this stuff should be statservice or something
-    function AddCmpPctToDataSet(dataset) {
-        AddStatToDataSet(dataset, 'CmpPct', CalcCmpPct);
-    }
-
-    function AddYdsPerAttToDataSet(dataset) {
-        AddStatToDataSet(dataset, 'PsYdsAtt', CalcYdsPerAtt);
-    }
-
-    
-    function AddStatToDataSet(ds, name, statfn) {
-        var statname = name;
-        ds.header.push({ label: name });
-        ds.games.forEach(function (game) {
-            game[statname] = statfn(game)
-        });
-    }
-
-    function CalcCmpPct(game) {
-        var result = game.Att && (game.Cmp / game.Att)*100
-        return Math.round(result);
-    }
-
-    function CalcYdsPerAtt(game) {
-        var result = game.Att && (game.PsYds / game.Att)
-        return result.toFixed(2);
-    }
-    
-
-    //todo: consdier if this should move to transform
+    //todo: consdier if this should moved to transform
     function gameRowsAsObjects(games, headers) {
         var gamesWithRowAsObj = games.map(function (row) {
             var rObj = {};
@@ -95,4 +68,4 @@
 
 };
 
-qbDataSvc.$inject = ['$http', '$rootScope', '$q'];
+qbDataSvc.$inject = ['$http', '$rootScope', 'statSvc','transformSvc'];

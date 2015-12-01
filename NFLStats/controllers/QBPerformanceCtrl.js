@@ -9,7 +9,7 @@
         selectedYear: '2011',
         selectedType: 'cmpPctLine'
     };
-
+    self.summary = { header: [], rows: [] };
     self.headers = [];
     self.qbOptions = qbData.options;
     self.yearOptions = transform.years;
@@ -24,6 +24,11 @@
             self.headers = result.header;
             self.qbImgSrc = result.qbImgSrc;
             self.gamesForYear = transform.gamesForYear(self.games, self.model.selectedYear);
+            //todo: test replacing the object
+            var summary = transform.getQBSummary(result);
+            self.summary.header = summary.header;
+            self.summary.rows = summary.rows;
+
             charts.updateChart(self.chart, self.gamesForYear);
         });
     }
