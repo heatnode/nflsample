@@ -12,31 +12,35 @@
     }
 
     function AddYdsPerAttToDataSet(dataset) {
-        AddStatToDataSet(dataset, 'PsYdsAtt', CalcYdsPerAtt);
+        AddStatToDataSet(dataset, 'PYA', CalcYdsPerAtt);
     }
     
     function AddStatToDataSet(ds, name, statfn) {
         var statname = name;
         ds.header.push({ label: name });
         //todo: fix this hack
-        if (ds.years) {
-            ds.years.forEach(function (tp) {
-                tp[statname] = statfn(tp);
-            });
-        } else {
-            ds.games.forEach(function (game) {
-                game[statname] = statfn(game);
-            });
-        }
+        //if (ds.years) {
+        //    ds.years.forEach(function (tp) {
+        //        tp[statname] = statfn(tp);
+        //    });
+        //} else {
+        //    ds.games.forEach(function (game) {
+        //        game[statname] = statfn(game);
+        //    });
+        //}
+        ds.rows.forEach(function (row) {
+            row.push(statfn(ds, row));
+            //game[statname] = ;
+        });
     }
     //timePeriod could be game, year, qtr
-    function CalcCmpPct(timePeriod) {
-        var result = timePeriod.Att && (timePeriod.Cmp / timePeriod.Att) * 100;
+    function CalcCmpPct(ds, timePeriod) {
+        var result = timePeriod[ds.getIndex("Att")] && (timePeriod[ds.getIndex("Cmp")] / timePeriod[ds.getIndex("Att")]) * 100;
         return Math.round(result);
     }
 
-    function CalcYdsPerAtt(timePeriod) {
-        var result = timePeriod.Att && (timePeriod.PsYds / timePeriod.Att);
+    function CalcYdsPerAtt(ds, timePeriod) {
+        var result = timePeriod[ds.getIndex("Att")] && (timePeriod[ds.getIndex("PsYds")] / timePeriod[ds.getIndex("Att")]);
         return result.toFixed(2);
     }
 

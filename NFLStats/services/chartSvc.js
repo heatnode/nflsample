@@ -39,6 +39,7 @@
                 chart: {
                     type: 'multiBarChart',
                     height: 450,
+                    showControls:false,
                     stacked: true,
                     //stackOffset:"expand",
                     margin: {
@@ -46,6 +47,15 @@
                         right: 20,
                         bottom: 50,
                         left: 55
+                    },
+                    legend: {
+                        updateState: false,
+                        dispatch: {
+                            legendClick: function (d, i) {
+                                // chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel = 'test';
+                                // console.log(chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel);
+                            }
+                        }
                     },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
@@ -58,7 +68,7 @@
                         axisLabel: 'Weeks'
                     },
                     yAxis: {
-                        axisLabel: 'Y Axis',
+                        axisLabel: 'Attempts',
                         axisLabelDistance: -10
                     }
                 }
@@ -82,14 +92,17 @@
                     valueFormat: function (d) {
                         return d3.format(',.2f')(d);
                     },
-                    interactiveLayer: {
-                        tooltip:{
-                            contentGenerator: function (data) {
-                                //console.log(data);
-                                    return 'this is my custom content';
-                                }
-                            }
-                    },
+                    //interactiveLayer: {
+                    //    tooltip:{
+                    //        contentGenerator: function (data) {
+                    //            //console.log(data);
+                    //            //console.log(key);
+                    //            //debugger;
+                    //            //return '<h3>' + key + '</h3>' + '<p>' + y + '</p>';
+                    //            //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
+                    //            }
+                    //        }
+                    //},
                     useInteractiveGuideline: true,
                     forceX:[0],
                     xAxis: {
@@ -199,99 +212,54 @@
     }
 
 
-    function updateChartData(chart, games) {
-        chart.data = chartTypeDefs[chart.statType].updateDataFn(games);
+    function updateChartData(chart, ds) {
+        chart.data = chartTypeDefs[chart.statType].updateDataFn(ds);
         chart.options = chartTypeDefs[chart.statType].options;
-        //chart.api.updateWithData(newData);
-        //updateWithOptions(options)	Update chart with new options json.
-        //updateWithData(data)
         chart.api.refreshWithTimeout(5);
     }
 
-    function updateLinePlusBar(games) {
+    function updateLinePlusBar(ds) {
         var cmpPctSeries = {
             key: "Completion %",
             values: [],
-            //yAxis: 1
         };
 
         var ydsAttSeries = {
             key: "Yds per Attempt",
             values: [],
             bar: true,
-           // yAxis: 2
         };
 
-        games.forEach(function (game) {
+        var weekIdx = ds.getIndex("week");
+        var cmpPctIdx = ds.getIndex("CmpPct");
+        var ydAttIdx = ds.getIndex("PYA");
+
+        ds.rows.forEach(function (row) {
             //var label = "Week " + game.week;
-            var label = game.week;
-            cmpPctSeries.values.push({x: label, y:game.CmpPct});
-            ydsAttSeries.values.push({x: label, y:game.PsYdsAtt});
-            //cmpPctSeries.values.push({
-            //    label: label,
-            //    value: game.CmpPct
-            //});
-
-            //ydsAttSeries.values.push({
-            //    label: label,
-            //    value: game.PsYdsAtt
-            //});
-
+            var label = row[weekIdx];
+            cmpPctSeries.values.push({ x: label, y: row[cmpPctIdx] });
+            ydsAttSeries.values.push({x: label, y: row[ydAttIdx]});
         })
-        //debugger;
-        //note newData is an array
+
         return [ydsAttSeries, cmpPctSeries];
-        //return [cmpPctSeries];
     }
 
 
-    function updatePctAndYds(games) {
-        var cmpPctSeries = {
-            key: "Completion %",
-            values: [],
-            type: "line",
-            yAxis: 1
-        };
-
-        var ydsAttSeries = {
-            key: "Yds per Attempt",
-            values: [],
-            type: "bar",
-            yAxis: 2
-        };
-
-        games.forEach(function (game) {
-            //var label = "Week " + game.week;
-            var label = game.week;
-            cmpPctSeries.values.push({
-                label: label,
-                value: game.CmpPct
-            });
-
-            ydsAttSeries.values.push({
-                label: label,
-                value: game.PsYdsAtt
-            });
-            
-        })
-        //debugger;
-        //note newData is an array
-        return [ydsAttSeries, cmpPctSeries];
-        //return [cmpPctSeries];
-    }
-
-    function updateCmpPctLine(games) {
+    function updateCmpPctLine(ds) {
         var cmpPctSeries = {
             key: "Completion %",
             values: [] 
         };
 
-        games.forEach(function (game) {
-            //var label = "Week " + game.week;
-            var label = game.week;
+        var weekIdx = ds.getIndex("week");
+        var cmpPctIdx = ds.getIndex("CmpPct");
+
+        ds.rows.forEach(function (row) {
+            //var label = "Week " + row[weekIdx];
+            var label = row[weekIdx];
             cmpPctSeries.values.push({
                 label: label,
-                value: game.CmpPct
+                value: row[cmpPctIdx]
             })
         })
 
@@ -302,34 +270,36 @@
 
 
 
-    function updateCmpOverAtt(games) {
+    function updateCmpOverAtt(ds) {
         
         var cmpSeries = {
             key: "Completions",
             values: []
         };
 
-        var attmpSeries = {
-            key: "Attempts",
+        var incmpSeries = {
+            key: "Incompletions",
             values: []
         }
 
-        games.forEach(function (game) {
-            var label = "Week " + game.week;
-            attmpSeries.values.push({
+        var weekIdx = ds.getIndex("week");
+        var cmpIdx = ds.getIndex("Cmp");
+        var attIdx = ds.getIndex("Att");
+
+        ds.rows.forEach(function (row) {
+            var label = "Week " + row[weekIdx];
+            incmpSeries.values.push({
                 label: label,
-                value: game.Att
+                value: row[attIdx] - row[cmpIdx]
             })
 
             cmpSeries.values.push({
                 label: label,
-                value: game.Cmp
+                value: row[cmpIdx]
             });
         })
 
-        //first number is attempts, second is completions
-        //note newData is an array
-        return [cmpSeries, attmpSeries];
+        return [cmpSeries, incmpSeries];
     }
 
 

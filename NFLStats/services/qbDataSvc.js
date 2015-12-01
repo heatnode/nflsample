@@ -25,14 +25,14 @@
             var dataset = {
                 header: result.data.header,
                 games: gameRowsAsObjects(result.data.rows, result.data.header),
-                gamerows:result.data.rows
+                rows:result.data.rows
             }
             //debugger;
             //decorate dataset with new stats and lookup
             transform.addLookup(dataset);
             stats.AddCmpPctToDataSet(dataset);
             stats.AddYdsPerAttToDataSet(dataset);
-            dataset.qbImgSrc = dataset.val(dataset.gamerows[0],"playerImage");
+            dataset.qbImgSrc = dataset.rows[0][dataset.getIndex("playerImage")]
             service.dataset = dataset;
             $rootScope.$broadcast('qbDataSvc:updated');
             return service.dataset;

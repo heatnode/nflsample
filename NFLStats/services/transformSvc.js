@@ -14,22 +14,29 @@
 
     return service;
 
-    function gamesForYear(games, year) {
-        return $filter('filter')(games, function (game) { return game['seasonYear'] == year; })
+    function gamesForYear(ds, year) {
+        var filteredDs = angular.copy(ds);
+        filteredDs.rows = $filter('filter')(filteredDs.rows, function (row) { return row[filteredDs.getIndex('seasonYear')] == year; })
+        return filteredDs;
     }
 
     function getQBSummary(dataset) {
         var summaryDataSet = {
             header: [{ label: 'Year' }, { label: 'PsYds' }, { label: 'Att' }, { label: 'Cmp' }],
-            rows:[]
+            rows: [],
+            displayCols:[0,1,4,5]
         }
+        var cmpIdx = dataset.getIndex("Cmp");
+        var attIdx = dataset.getIndex("Att");
+        var pyIdx = dataset.getIndex("PsYds");
         //could make this a little smarter
         years.forEach(function (year) {
-            var games = gamesForYear(dataset.games, year);
-            var tots = games.reduce(function (sumObj, cur) {
-                sumObj.PsYds = sumObj.PsYds + cur.PsYds;
-                sumObj.Att = sumObj.Att + cur.Att;
-                sumObj.Cmp = sumObj.Cmp + cur.Cmp;
+            var yearDS = gamesForYear(dataset, year);
+
+            var tots = yearDS.rows.reduce(function (sumObj, row) {
+                sumObj.PsYds = sumObj.PsYds + row[pyIdx];
+                sumObj.Att = sumObj.Att + row[attIdx];
+                sumObj.Cmp = sumObj.Cmp + row[cmpIdx];
                 return sumObj;
             }, { PsYds: 0, Att: 0, Cmp: 0 });
             summaryDataSet.rows.push([year, tots.PsYds, tots.Att, tots.Cmp]);
@@ -38,23 +45,33 @@
         summaryDataSet.rows.sort(function (a, b) {
             return a[0] < b[0];
         });
-
-        //stats.AddCmpPctToDataSet(dataset);
-        //stats.AddYdsPerAttToDataSet(dataset);
-
         addLookup(summaryDataSet);
+        stats.AddCmpPctToDataSet(summaryDataSet);
+        stats.AddYdsPerAttToDataSet(summaryDataSet);
         return summaryDataSet;
     }
 
     function addLookup(dataset) {
-        var hdrmap = {};
-        dataset.header.forEach(function (val, idx) {
-            hdrmap[val.label] = idx;
-        });
+        //var hdrmap = {};
+        //dataset.header.forEach(function (val, idx) {
+        //    hdrmap[val.label] = idx;
+        //});
 
-        dataset.val = function (row, label) {
-            var idx = hdrmap[label];
-            return row[idx];
+        //dataset.val = function (row, label) {
+        //    var idx = hdrmap[label];
+        //    return row[idx];
+        //}
+        //add function that gets the index based on the label 
+        //seems to be like a key for the data
+        dataset.getIndex = function (label) {
+            var retval = null;
+            this.header.some(function (el, idx) {
+                if (el.label === label) {
+                    retval = idx;
+                    return true;
+                }
+            });
+            return retval;
         }
     }
 

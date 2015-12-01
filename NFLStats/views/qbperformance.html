@@ -20,21 +20,21 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-2">
-            <img class="img-responsive img-circle" ng-src="{{qbperf.qbImgSrc || ''}}" alt="{{ qbperf.model.selectedQB }}"/>
+        <div class="col-sm-3">
+            <img class="img-responsive img-circle center-block" ng-src="{{qbperf.qbImgSrc || ''}}" alt="{{ qbperf.model.selectedQB }}"/>
             <div ng-if="qbperf.model.selectedQB">
                 <table class="table table-responsive table-condensed table-hover">
                     <thead>
                         <tr>
                             <!--todo: obviously clean this index stuff up to be a proper object-->
-                            <th ng-repeat="header in qbperf.summary.header track by $index">
+                            <th ng-if="qbperf.summary.displayCols.indexOf($index) != -1" ng-repeat="header in qbperf.summary.header track by $index">
                                 {{ header.label }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="row in qbperf.summary.rows">
-                            <td ng-repeat="cell in row track by $index">
+                        <tr  ng-repeat="row in qbperf.summary.rows" ng-class="{'active':qbperf.model.selectedYear == row[0]}">
+                            <td class="text-center" ng-if="qbperf.summary.displayCols.indexOf($index) != -1" ng-repeat="cell in row track by $index">
                                 {{ cell }}
                             </td>
                         </tr>
@@ -43,7 +43,7 @@
                  
             </div>
         </div>
-        <div class="col-sm-10">
+        <div class="col-sm-9">
             <nvd3 options="qbperf.chart.options" data="qbperf.chart.data" api="qbperf.chart.api"></nvd3>
         </div>
     </div>
@@ -53,13 +53,13 @@
                 <thead>
                     <tr>
                         <!--todo: obviously clean this index stuff up to be a proper object-->
-                        <th ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="header in qbperf.headers track by $index">
+                        <th ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="header in qbperf.dsForYear.header track by $index">
                             {{ header.label }}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="row in qbperf.gamesForYear">
+                    <tr ng-repeat="row in qbperf.dsForYear.rows">
                         <td ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="cell in row track by $index">
                             {{ cell }}
                         </td>
