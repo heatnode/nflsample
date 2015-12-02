@@ -52,8 +52,6 @@
                         updateState: false,
                         dispatch: {
                             legendClick: function (d, i) {
-                                // chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel = 'test';
-                                // console.log(chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel);
                             }
                         }
                     },
@@ -61,7 +59,7 @@
                     y: function (d) { return d.value; },
                     showValues: true,
                     valueFormat: function (d) {
-                        return d3.format(',.2f')(d);
+                        return d3.format(',.0f')(d);
                     },
                     duration: 500,
                     xAxis: {
@@ -103,14 +101,9 @@
                                 return "Week " + hdr;
                             }
                             //contentGenerator: function (data) {
-                            //    $rootScope.$broadcast('tooltip:updated');
                             //    chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel
                             //    return 
                             //}
-                            //    //console.log(data);
-                            //    //console.log(key);
-                            //    //debugger;
-                            //    //return '<h3>' + key + '</h3>' + '<p>' + y + '</p>';
                             //    //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
                             //    }
                             }
@@ -141,22 +134,10 @@
                         left: 50
                     },
                     focusEnable:false,
-                    //x: function (d) { return d.x; },
-                   // y: function (d) { return d.y; },
-                   // x: function (d) { return d.label; },
-                  //  y: function (d) { return d.value; },
                     showValues: true,
                     valueFormat: function (d) {
                         return d3.format(',.2f')(d);
                     },
-                    //interactiveLayer: {
-                    //    tooltip: {
-                    //        contentGenerator: function (data) {
-                    //            console.log(data);
-                    //            return 'this is my custom content';
-                    //        }
-                    //    }
-                    //},
                     useInteractiveGuideline: true,
                     forceX: [0],
                     bars: {
@@ -174,17 +155,6 @@
                     //yDomain2:[0, 25],
                     xAxis: {
                         axisLabel: 'Week',
-                        //tickFormat: function(d) {
-                        //    // I didn't feel like changing all the above date values
-                        //    // so I hack it to make each value fall on a different date
-                        //    return 'weeke ' + d.label;
-                        //}
-                        //tickFormat: function (d) {
-                        //    // I didn't feel like changing all the above date values
-                        //    // so I hack it to make each value fall on a different date
-                        //    console.log(d);
-                        //    return d.label;
-                        //}
                     },
                     yAxis1: {
                         axisLabel: 'Completion %',
@@ -194,26 +164,65 @@
                     yAxis2: {
                         axisLabel: 'Yds attempt',
                         axisLabelDistance: -10
-                        //tickFormat: function (d) {
-                        //    // I didn't feel like changing all the above date values
-                        //    // so I hack it to make each value fall on a different date
-                        //    return d.label;
-                        //}
                     },
-                    //chart.yAxis1.tickFormat(d3.format(',.1f'));
-                    //chart.yAxis2.tickFormat(d3.format(',.1f'));
                     callback: function (chart) {
+                        //todo: could setup events here possibly
                         console.log("!!! lineChart callback !!!");
+                    }
+                }
+            }
+        },
+        //year charts - this would be refactored with other line chart
+        cmpPctLineAllYears: {
+            updateDataFn: updateCmpPctLineAllYears,
+            options: {
+                chart: {
+                    type: 'lineChart',
+                    height: 450,
+                    margin: {
+                        top: 20,
+                        right: 20,
+                        bottom: 40,
+                        left: 55
+                    },
+                    x: function (d) { return d.label; },
+                    y: function (d) { return d.value; },
+                    showValues: true,
+                    valueFormat: function (d) {
+                        return d3.format(',.2f')(d);
+                    },
+                    interactiveLayer: {
+                        tooltip: {
+                            headerFormatter: function (hdr) {
+                                //todo: bit of a hack here
+                                //if (this.selectedWeek != hdr) {
+                                //    this.selectedWeek = hdr;
+                                //    $rootScope.$broadcast('tooltip:updated', hdr);
+                                //}
+                                return "Week " + hdr;
+                            }
+                            //contentGenerator: function (data) {
+                            //    chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel
+                            //    return 
+                            //}
+                            //    //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
+                            //    }
+                        }
+                    },
+                    useInteractiveGuideline: true,
+                    forceX: [0],
+                    xAxis: {
+                        axisLabel: 'Week'
+                    },
+                    yAxis: {
+                        axisLabel: 'Completion %',
+                        axisLabelDistance: -10
                     }
                 }
             }
         }
     }
-    debugger;
-    //chartTypeDefs.cmpPctLine.lines.dispatch.on("elementClick", function (e) {
-    //    console.log(e);
-    //});
-
+    
     service.charts = Object.keys(chartTypeDefs);
 
     return service;  
@@ -232,7 +241,6 @@
         chart.data = chartTypeDefs[chart.statType].updateDataFn(ds);
         chart.options = chartTypeDefs[chart.statType].options;
         chart.api.refreshWithTimeout(5);
-        debugger;
     }
 
     function updateLinePlusBar(ds) {
@@ -266,6 +274,31 @@
         var cmpPctSeries = {
             key: "Completion %",
             values: [] 
+        };
+
+        var weekIdx = ds.getIndex("week");
+        var cmpPctIdx = ds.getIndex("CmpPct");
+
+        ds.rows.forEach(function (row) {
+            //var label = "Week " + row[weekIdx];
+            var label = row[weekIdx];
+            cmpPctSeries.values.push({
+                label: label,
+                value: row[cmpPctIdx]
+            })
+        })
+
+        //first number is attempts, second is completions
+        //note newData is an array
+        return [cmpPctSeries];
+    }
+
+    //refactor with above
+    //todo: just take in summary dataset insetad of yearly
+    function updateCmpPctLineYears(ds) {
+        var cmpPctSeries = {
+            key: "Completion %",
+            values: []
         };
 
         var weekIdx = ds.getIndex("week");

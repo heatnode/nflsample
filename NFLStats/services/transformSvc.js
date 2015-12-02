@@ -1,6 +1,6 @@
 ﻿var transformSvc = function ($filter, stats) {
 
-    var years = ['2011','2012','2013','2014','2015'];
+    var years = ['2015','2014','2013','2012','2011'];
 
     var teams = {
     };
@@ -68,9 +68,9 @@
         });
 
         //invert the order by year
-        summaryDataSet.rows.sort(function (a, b) {
-            return a[0] < b[0];
-        });
+        //summaryDataSet.rows.sort(function (a, b) {
+        //    return a[0] < b[0];
+        //});
         addLookup(summaryDataSet);
         stats.AddCmpPctToDataSet(summaryDataSet);
         stats.AddYdsPerAttToDataSet(summaryDataSet);

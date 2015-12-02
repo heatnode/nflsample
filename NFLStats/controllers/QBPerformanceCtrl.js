@@ -4,14 +4,13 @@
     //use "controller as" syntax
 
     self.model = {
-        selectedQB: qbData.selectedQB, 
-        selectedYear: '2013',
+        selectedQB: null, 
+        selectedYear: '2015',
         selectedType: 'cmpPctLine',
         selectedWeek: null,
-        weekDetails: null
+        weekDetails: null,
+        showSecondaryChart: true
     };
-
-    //self.summary = { header: [], rows: [] };
     self.summary = {};
     self.dataset = null;
     self.qbOptions = qbData.options;
