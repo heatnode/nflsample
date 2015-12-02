@@ -3,38 +3,60 @@
         <div class="col-xs-12">
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="qbSelect">QB to review:</label>
+                    <!--<label for="qbSelect">QB to review:</label>
                     <select id="qbSelect" ng-model="qbperf.model.selectedQB" ng-options="o as o for o in qbperf.qbOptions"
-                            ng-change='qbperf.changeQB(qbperf.model.selectedQB)'></select>
+                            ng-change='qbperf.changeQB(qbperf.model.selectedQB)'></select>-->
                 </div>
-                <div class="form-group">
+                <ol  ng-model="qbperf.model.selectedQB" ng-change='qbperf.changeQB(qbperf.model.selectedQB)' class="nya-bs-select" title="Select a QB">
+                    <li nya-bs-option="o in qbperf.qbOptions">
+                        <a>
+                            {{ o }}
+                        </a>
+                    </li>
+                </ol>
+                <!--<div class="form-group">
                     <label >year:</label>
                     <select ng-model="qbperf.model.selectedYear" ng-options="o as o for o in qbperf.yearOptions"
                             ng-change='qbperf.changeYear(qbperf.model.selectedYear)'></select>
-                </div>
-                <div class="form-group">
+                </div>-->
+                <ol ng-model="qbperf.model.selectedYear" ng-change='qbperf.changeYear(qbperf.model.selectedYear)' class="nya-bs-select"  title="Select Year">
+                    <li nya-bs-option="o in qbperf.yearOptions">
+                        <a>
+                            {{ o }}
+                        </a>
+                    </li>
+                </ol>
+                <!--<div class="form-group">
                     <label>Chart Type:</label>
                     <select ng-model="qbperf.model.selectedType" ng-options="o as o for o in qbperf.chartOptions"></select>
-                </div>
+                </div>-->
+
+                <ol ng-model="qbperf.model.selectedType" class="nya-bs-select" title="Select Chart type">
+                    <li nya-bs-option="o in qbperf.chartOptions">
+                        <a>
+                            {{ o }}
+                        </a>
+                    </li>
+                </ol>
             </form>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-3">
-            <img class="img-responsive img-circle center-block" ng-src="{{qbperf.qbImgSrc || ''}}" alt="{{ qbperf.model.selectedQB }}"/>
+            <img class="img-responsive img-circle center-block hidden-xs" ng-src="{{qbperf.qbImgSrc || ''}}" alt="{{ qbperf.model.selectedQB }}"/>
             <div ng-if="qbperf.model.selectedQB">
-                <table class="table table-responsive table-condensed table-hover">
+                <table class="table table-responsive table-condensed ">
                     <thead>
                         <tr>
                             <!--todo: obviously clean this index stuff up to be a proper object-->
-                            <th ng-if="qbperf.summary.displayCols.indexOf($index) != -1" ng-repeat="header in qbperf.summary.header track by $index">
+                            <th uib-tooltip="{{ header.name }}" tooltip-append-to-body="true" ng-if="qbperf.showColumn($index, qbperf.summary)" ng-repeat="header in qbperf.summary.header track by $index">
                                 {{ header.label }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr  ng-repeat="row in qbperf.summary.rows" ng-class="{'active':qbperf.model.selectedYear == row[0]}">
-                            <td class="text-center" ng-if="qbperf.summary.displayCols.indexOf($index) != -1" ng-repeat="cell in row track by $index">
+                            <td class="text-center" ng-if="qbperf.showColumn($index, qbperf.summary)" ng-repeat="cell in row track by $index">
                                 {{ cell }}
                             </td>
                         </tr>
@@ -47,25 +69,56 @@
             <nvd3 options="qbperf.chart.options" data="qbperf.chart.data" api="qbperf.chart.api"></nvd3>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <table class="table table-responsive">
+    <div class="row" ng-if="qbperf.model.selectedQB">
+        <div class="col-sm-5">
+            <h4 >Weekly Summary</h4>
+            <table class="table table-responsive table-hover">
                 <thead>
                     <tr>
-                        <!--todo: obviously clean this index stuff up to be a proper object-->
-                        <th ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="header in qbperf.dsForYear.header track by $index">
+                        <th uib-tooltip="{{ header.name }}" tooltip-append-to-body="true" ng-if="qbperf.showColumn($index, qbperf.dsForYear)"  ng-repeat="header in qbperf.dsForYear.header track by $index">
                             {{ header.label }}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="row in qbperf.dsForYear.rows">
-                        <td ng-if="$index == 4 || $index == 8 || $index > 9" ng-repeat="cell in row track by $index">
+                    <tr  ng-repeat="row in qbperf.dsForYear.rows" ng-click="qbperf.selectWeek(row)" ng-class="{'active':qbperf.model.selectedWeek == row}">
+                        <td ng-if="qbperf.showColumn($index, qbperf.dsForYear)" ng-repeat="cell in row track by $index">
                             {{ cell }}
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="col-sm-6">
+            <div class="detailPanel center-block" ng-show="!qbperf.model.weekDetails">
+                <!--todo:tidy up-->
+                <h4 class="text-center">Select a week to view details</h4>
+            </div>
+            <div class="panel panel-default detailPanel center-block" ng-show="qbperf.model.weekDetails">
+                <!-- Default panel contents -->
+                <div class="panel-heading clearfix">
+                    <div class="col-sm-2">
+                        <img class="img-responsive img-circle center-block" ng-src="{{qbperf.model.weekDetails.teamImage || ''}}" alt="" />
+                    </div>
+                    <div class="col-sm-8 text-center">
+                        <h4>{{qbperf.model.weekDetails.qbName}}</h4>
+                        {{qbperf.model.weekDetails.gameDateString}}
+                    </div>
+                    <div class="col-sm-2">
+                        <img class="img-responsive img-circle  center-block" ng-src="{{ qbperf.model.weekDetails.opponentImage || ''}}" alt="" />
+                    </div>
+                    
+                </div>
+                
+                <dl class="dl-horizontal">
+                        <dt ng-repeat-start="(key, val) in qbperf.model.weekDetails.data">{{ key }}</dt>
+                        <dd ng-repeat-end>{{ val }}</dd>
+                </dl>
+                <!-- Table 
+                <table class="table">
+                    ...
+                </table>-->
+            </div>
         </div>
     </div>
 

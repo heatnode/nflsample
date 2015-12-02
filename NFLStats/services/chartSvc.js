@@ -1,4 +1,4 @@
-﻿var chartSvc = function ($q, $filter) {
+﻿var chartSvc = function ($rootScope, $filter) {
 
     //var charts = Object.keys(chartTypeDefs);
 
@@ -92,17 +92,29 @@
                     valueFormat: function (d) {
                         return d3.format(',.2f')(d);
                     },
-                    //interactiveLayer: {
-                    //    tooltip:{
-                    //        contentGenerator: function (data) {
-                    //            //console.log(data);
-                    //            //console.log(key);
-                    //            //debugger;
-                    //            //return '<h3>' + key + '</h3>' + '<p>' + y + '</p>';
-                    //            //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
-                    //            }
-                    //        }
-                    //},
+                    interactiveLayer: {
+                        tooltip:{
+                            headerFormatter: function (hdr) {
+                                //todo: bit of a hack here
+                                //if (this.selectedWeek != hdr) {
+                                //    this.selectedWeek = hdr;
+                                //    $rootScope.$broadcast('tooltip:updated', hdr);
+                                //}
+                                return "Week " + hdr;
+                            }
+                            //contentGenerator: function (data) {
+                            //    $rootScope.$broadcast('tooltip:updated');
+                            //    chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel
+                            //    return 
+                            //}
+                            //    //console.log(data);
+                            //    //console.log(key);
+                            //    //debugger;
+                            //    //return '<h3>' + key + '</h3>' + '<p>' + y + '</p>';
+                            //    //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
+                            //    }
+                            }
+                    },
                     useInteractiveGuideline: true,
                     forceX:[0],
                     xAxis: {
@@ -268,8 +280,6 @@
         return [cmpPctSeries];
     }
 
-
-
     function updateCmpOverAtt(ds) {
         
         var cmpSeries = {
@@ -306,4 +316,4 @@
 
 };
 
-chartSvc.$inject = ['$q', '$filter'];
+chartSvc.$inject = ['$rootScope', '$filter'];

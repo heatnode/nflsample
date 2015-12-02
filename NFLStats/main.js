@@ -1,4 +1,4 @@
-﻿var MattSample = angular.module('MattSample', ['ngRoute', 'nvd3']);
+﻿var MattSample = angular.module('MattSample', ['ngRoute', 'nvd3', 'nya.bootstrap.select', 'ui.bootstrap']);
 
 MattSample.factory('statSvc', statSvc);
 MattSample.factory('qbDataSvc', qbDataSvc);

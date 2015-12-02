@@ -24,17 +24,15 @@
         return $http.get(url).then(function (result) {
             var dataset = {
                 header: result.data.header,
-                games: gameRowsAsObjects(result.data.rows, result.data.header),
-                rows:result.data.rows
+                rows: result.data.rows
             }
-            //debugger;
             //decorate dataset with new stats and lookup
             transform.addLookup(dataset);
             stats.AddCmpPctToDataSet(dataset);
             stats.AddYdsPerAttToDataSet(dataset);
             dataset.qbImgSrc = dataset.rows[0][dataset.getIndex("playerImage")]
             service.dataset = dataset;
-            $rootScope.$broadcast('qbDataSvc:updated');
+            //$rootScope.$broadcast('qbDataSvc:updated');
             return service.dataset;
         }).catch(function (err) {
             console.log(err);
@@ -42,27 +40,27 @@
     }
 
     //todo: consdier if this should moved to transform
-    function gameRowsAsObjects(games, headers) {
-        var gamesWithRowAsObj = games.map(function (row) {
-            var rObj = {};
-            row.forEach(function (val, idx) {
-                var key = headers[idx].label;
-                rObj[key] = val;
-            });
-            return rObj;
-        });
-        return gamesWithRowAsObj;
-    }
+    //function gameRowsAsObjects(games, headers) {
+    //    var gamesWithRowAsObj = games.map(function (row) {
+    //        var rObj = {};
+    //        row.forEach(function (val, idx) {
+    //            var key = headers[idx].label;
+    //            rObj[key] = val;
+    //        });
+    //        return rObj;
+    //    });
+    //    return gamesWithRowAsObj;
+    //}
 
 
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > milliseconds) {
-                break;
-            }
-        }
-    }
+    //function sleep(milliseconds) {
+    //    var start = new Date().getTime();
+    //    for (var i = 0; i < 1e7; i++) {
+    //        if ((new Date().getTime() - start) > milliseconds) {
+    //            break;
+    //        }
+    //    }
+    //}
 
     return service;
 

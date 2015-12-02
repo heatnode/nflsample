@@ -8,29 +8,20 @@
     return service;
 
     function AddCmpPctToDataSet(dataset) {
-        AddStatToDataSet(dataset, 'CmpPct', CalcCmpPct);
+        var hdrObj = { label: 'CmpPct', name: 'Completion Percentage' };
+        AddStatToDataSet(dataset, hdrObj, CalcCmpPct);
     }
 
     function AddYdsPerAttToDataSet(dataset) {
-        AddStatToDataSet(dataset, 'PYA', CalcYdsPerAtt);
+        var hdrObj = { label: 'PYA', name: 'Pass Yards/Attempt' };
+        AddStatToDataSet(dataset, hdrObj, CalcYdsPerAtt);
     }
     
-    function AddStatToDataSet(ds, name, statfn) {
-        var statname = name;
-        ds.header.push({ label: name });
-        //todo: fix this hack
-        //if (ds.years) {
-        //    ds.years.forEach(function (tp) {
-        //        tp[statname] = statfn(tp);
-        //    });
-        //} else {
-        //    ds.games.forEach(function (game) {
-        //        game[statname] = statfn(game);
-        //    });
-        //}
+    function AddStatToDataSet(ds, hdrObj, statfn) {
+        var statname = hdrObj.label;
+        ds.header.push(hdrObj);
         ds.rows.forEach(function (row) {
             row.push(statfn(ds, row));
-            //game[statname] = ;
         });
     }
     //timePeriod could be game, year, qtr

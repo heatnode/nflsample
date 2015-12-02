@@ -4,6 +4,9 @@
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
+.detailPanel {
+    margin-top: 45px;
+}
 /*.tooltip h3 {
 }
 .tooltip*/ 
