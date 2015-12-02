@@ -1,4 +1,4 @@
-﻿var qbDataSvc = function ($http, $rootScope, stats, transform) {
+﻿var qbDataSvc = function ($http, stats, transform) {
 
     var qbDataSources = {
         "Tom Brady": "nfl-1870523.json",
@@ -32,38 +32,14 @@
             stats.AddYdsPerAttToDataSet(dataset);
             dataset.qbImgSrc = dataset.rows[0][dataset.getIndex("playerImage")]
             service.dataset = dataset;
-            //$rootScope.$broadcast('qbDataSvc:updated');
             return service.dataset;
         }).catch(function (err) {
             console.log(err);
         });
     }
 
-    //todo: consdier if this should moved to transform
-    //function gameRowsAsObjects(games, headers) {
-    //    var gamesWithRowAsObj = games.map(function (row) {
-    //        var rObj = {};
-    //        row.forEach(function (val, idx) {
-    //            var key = headers[idx].label;
-    //            rObj[key] = val;
-    //        });
-    //        return rObj;
-    //    });
-    //    return gamesWithRowAsObj;
-    //}
-
-
-    //function sleep(milliseconds) {
-    //    var start = new Date().getTime();
-    //    for (var i = 0; i < 1e7; i++) {
-    //        if ((new Date().getTime() - start) > milliseconds) {
-    //            break;
-    //        }
-    //    }
-    //}
-
     return service;
 
 };
 
-qbDataSvc.$inject = ['$http', '$rootScope', 'statSvc','transformSvc'];
+qbDataSvc.$inject = ['$http', 'statSvc','transformSvc'];

@@ -8,7 +8,8 @@
     var service = {
         gamesForYear: gamesForYear,
         getQBSummary: getQBSummary,
-        getDetailsForWeek:getDetailsForWeek,
+        getDetailsForWeek: getDetailsForWeek,
+        getOpponentSummary:getOpponentSummary,
         years: years,
         addLookup:addLookup
     };
@@ -16,7 +17,6 @@
     return service;
 
     function getDetailsForWeek(ds, week) {
-        //var week = ds.rows[0];
         var detailsObj = {
             data: {},
             gameDateString: $filter('date')(new Date(week[ds.getIndex('gameDate')]),'MM/dd/yyyy'),
@@ -28,7 +28,7 @@
         ds.header.forEach(function (hdrObj, idx) {
             //if this is NOT in the list of ignored indexes
             if (indexToIgnore.indexOf(idx) == -1) {
-                //try for desc or fall back to name
+                //try for name or fall back to label
                 var key = hdrObj.name || hdrObj.label; 
                 detailsObj.data[key] = week[idx];
             }
@@ -40,13 +40,12 @@
     function gamesForYear(ds, year) {
         var filteredDs = angular.copy(ds);
         filteredDs.rows = $filter('filter')(filteredDs.rows, function (row) { return row[filteredDs.getIndex('seasonYear')] == year; })
-        //todo: not sure where to set this
         filteredDs.displayCols = [4, 8, 10, 14, 15, 19, 20];
-        //filteredDs.displayCols = [4, 8, 10,11,12,13, 14,15,16,17,18, 19, 20];
         return filteredDs;
     }
 
     function getQBSummary(dataset) {
+        //could make this a little smarter
         var summaryDataSet = {
             header: [{ label: 'Year' }, { label: 'PsYds', name:'Passing Yards' }, { label: 'Att' }, { label: 'Cmp' }],
             rows: [],
@@ -55,10 +54,10 @@
         var cmpIdx = dataset.getIndex("Cmp");
         var attIdx = dataset.getIndex("Att");
         var pyIdx = dataset.getIndex("PsYds");
-        //could make this a little smarter
+        
+
         years.forEach(function (year) {
             var yearDS = gamesForYear(dataset, year);
-
             var tots = yearDS.rows.reduce(function (sumObj, row) {
                 sumObj.PsYds = sumObj.PsYds + row[pyIdx];
                 sumObj.Att = sumObj.Att + row[attIdx];
@@ -91,6 +90,47 @@
             });
             return retval;
         }
+    }
+
+    //Get stats for opponent played more than twice in last 3 years
+    function getOpponentSummary(dataset) {
+        //could make this a little smarter
+        var summaryDataSet = {
+            header: [{ label: 'Year' }, { label: 'PsYds', name: 'Passing Yards' }, { label: 'Att' }, { label: 'Cmp' }],
+            rows: []
+        //    displayCols: [0, 1, 4, 5]
+        }
+        var cmpIdx = dataset.getIndex("Cmp");
+        var attIdx = dataset.getIndex("Att");
+        var pyIdx = dataset.getIndex("PsYds");
+        var opIdx = dataset.getIndex("opponent");
+
+        var opCounts = {};
+        dataset.rows.forEach(function (row) {
+            var opteam = row[opIdx];
+            if (!(opteam in opCounts)) {
+                opCounts[opteam] = 0;
+            }
+            opCounts[opteam] = opCounts[opteam] + 1;
+
+            //var yearDS = gamesForYear(dataset, year);
+            //var tots = yearDS.rows.reduce(function (sumObj, row) {
+            //    sumObj.PsYds = sumObj.PsYds + row[pyIdx];
+            //    sumObj.Att = sumObj.Att + row[attIdx];
+            //    sumObj.Cmp = sumObj.Cmp + row[cmpIdx];
+            //    return sumObj;
+            //}, { PsYds: 0, Att: 0, Cmp: 0 });
+            //summaryDataSet.rows.push([year, tots.PsYds, tots.Att, tots.Cmp]);
+        });
+
+        //invert the order by year
+        //summaryDataSet.rows.sort(function (a, b) {
+        //    return a[0] < b[0];
+        //});
+        //addLookup(summaryDataSet);
+        //stats.AddCmpPctToDataSet(summaryDataSet);
+        //stats.AddYdsPerAttToDataSet(summaryDataSet);
+        return opCounts;
     }
 
 };

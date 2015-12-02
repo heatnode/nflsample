@@ -7,6 +7,10 @@
 .detailPanel {
     margin-top: 45px;
 }
+
+.maxForApp {
+   max-width:1200px;
+}
 /*.tooltip h3 {
 }
 .tooltip*/ 

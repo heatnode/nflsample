@@ -29,7 +29,7 @@
 </head>
 <body>
     <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
+        <div class="container-fluid maxForApp">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -51,15 +51,17 @@
                 
         </div>
     </nav>
-    <div class="container-fluid" ng-view></div>
+    <div class="container-fluid maxForApp" ng-view></div>
 </body>
 </html>
 
 <!--
     todo:
+    chart desc?
+    fix "click on home" issue
+    opponnents
     clean up top form
     clean up vars in ctrl
-    hovers on columns -- review for standard abbrevs
     fix responsiveness
     multiple years on lines?
     overview and detail on lower grid

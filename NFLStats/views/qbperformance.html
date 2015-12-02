@@ -4,46 +4,41 @@
             <form class="form-inline">
                 <div class="form-group">
                     <!--<label for="qbSelect">QB to review:</label>
-                    <select id="qbSelect" ng-model="qbperf.model.selectedQB" ng-options="o as o for o in qbperf.qbOptions"
-                            ng-change='qbperf.changeQB(qbperf.model.selectedQB)'></select>-->
-                </div>
-                <ol  ng-model="qbperf.model.selectedQB" ng-change='qbperf.changeQB(qbperf.model.selectedQB)' class="nya-bs-select" title="Select a QB">
-                    <li nya-bs-option="o in qbperf.qbOptions">
-                        <a>
-                            {{ o }}
-                        </a>
-                    </li>
-                </ol>
-                <!--<div class="form-group">
-                    <label >year:</label>
-                    <select ng-model="qbperf.model.selectedYear" ng-options="o as o for o in qbperf.yearOptions"
-                            ng-change='qbperf.changeYear(qbperf.model.selectedYear)'></select>
-                </div>-->
-                <ol ng-model="qbperf.model.selectedYear" ng-change='qbperf.changeYear(qbperf.model.selectedYear)' class="nya-bs-select"  title="Select Year">
-                    <li nya-bs-option="o in qbperf.yearOptions">
-                        <a>
-                            {{ o }}
-                        </a>
-                    </li>
-                </ol>
-                <!--<div class="form-group">
-                    <label>Chart Type:</label>
-                    <select ng-model="qbperf.model.selectedType" ng-options="o as o for o in qbperf.chartOptions"></select>
-                </div>-->
+        <select id="qbSelect" ng-model="qbperf.model.selectedQB" ng-options="o as o for o in qbperf.qbOptions"
+                ng-change='qbperf.changeQB(qbperf.model.selectedQB)'></select>-->
 
-                <ol ng-model="qbperf.model.selectedType" class="nya-bs-select" title="Select Chart type">
-                    <li nya-bs-option="o in qbperf.chartOptions">
-                        <a>
-                            {{ o }}
-                        </a>
-                    </li>
-                </ol>
+                    <ol ng-model="qbperf.model.selectedQB" ng-change='qbperf.changeQB(qbperf.model.selectedQB)' class="nya-bs-select" title="Select a QB">
+                        <li nya-bs-option="o in qbperf.qbOptions">
+                            <a>
+                                {{ o }}
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="form-group">
+                    <ol ng-model="qbperf.model.selectedYear" ng-change='qbperf.changeYear(qbperf.model.selectedYear)' class="nya-bs-select" title="Select Year">
+                        <li nya-bs-option="o in qbperf.yearOptions">
+                            <a>
+                                {{ o }}
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="form-group">
+                    <ol ng-model="qbperf.model.selectedType" class="nya-bs-select" title="Select Chart type">
+                        <li nya-bs-option="o in qbperf.chartOptions">
+                            <a>
+                                {{ o }}
+                            </a>
+                        </li>
+                    </ol>
+                </div>
             </form>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-3">
-            <img class="img-responsive img-circle center-block hidden-xs" ng-src="{{qbperf.qbImgSrc || ''}}" alt="{{ qbperf.model.selectedQB }}"/>
+            <img class="img-responsive img-circle center-block hidden-xs" ng-src="{{qbperf.dataset.qbImgSrc || ''}}" alt="{{ qbperf.model.selectedQB }}"/>
             <div ng-if="qbperf.model.selectedQB">
                 <table class="table table-responsive table-condensed ">
                     <thead>
@@ -70,7 +65,7 @@
         </div>
     </div>
     <div class="row" ng-if="qbperf.model.selectedQB">
-        <div class="col-sm-5">
+        <div class="col-sm-6">
             <h4 >Weekly Summary</h4>
             <table class="table table-responsive table-hover">
                 <thead>
