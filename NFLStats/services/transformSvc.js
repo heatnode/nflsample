@@ -1,6 +1,6 @@
 ﻿var transformSvc = function ($filter, stats) {
 
-    var years = ['2011','2012','2013'];
+    var years = ['2011','2012','2013','2014','2015'];
 
     var teams = {
     };
@@ -104,10 +104,10 @@
         var attIdx = dataset.getIndex("Att");
         var pyIdx = dataset.getIndex("PsYds");
         var opIdx = dataset.getIndex("opponent");
-
         var opCounts = {};
         dataset.rows.forEach(function (row) {
             var opteam = row[opIdx];
+            
             if (!(opteam in opCounts)) {
                 opCounts[opteam] = 0;
             }

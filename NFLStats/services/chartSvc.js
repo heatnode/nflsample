@@ -209,6 +209,10 @@
             }
         }
     }
+    debugger;
+    //chartTypeDefs.cmpPctLine.lines.dispatch.on("elementClick", function (e) {
+    //    console.log(e);
+    //});
 
     service.charts = Object.keys(chartTypeDefs);
 
@@ -228,6 +232,7 @@
         chart.data = chartTypeDefs[chart.statType].updateDataFn(ds);
         chart.options = chartTypeDefs[chart.statType].options;
         chart.api.refreshWithTimeout(5);
+        debugger;
     }
 
     function updateLinePlusBar(ds) {

@@ -63,13 +63,6 @@
         return (dataset.displayCols.indexOf(idx) != -1);
     }
 
-    //$scope.$on('tooltip:updated', function (week, w) {
-    //    ////        angularEvent.targetScope.$parent.event = event;
-    //    //  //      angularEvent.targetScope.$parent.$digest();
-    //    //        console.log(w);
-    //    //    });    
-
-    //});
 }
 
 // The $inject property of every controller (and pretty much every other type of object in Angular) 
