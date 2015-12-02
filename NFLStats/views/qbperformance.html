@@ -58,8 +58,8 @@
         <div ng-class="qbperf.model.showSecondaryChart == true ? 'col-sm-4' : 'col-sm-9'">
             <nvd3 options="qbperf.chart.options" data="qbperf.chart.data" api="qbperf.chart.api"></nvd3>
         </div>
-        <div class="col-sm-4" ng-if="qbperf.model.showSecondaryChart">
-            <nvd3 options="qbperf.chart2.options" data="qbperf.chart2.data" api="qbperf.chart2.api"></nvd3>
+        <div class="col-sm-4" ng-show="qbperf.model.showSecondaryChart && qbperf.chartSecondary">
+            <nvd3 options="qbperf.chartSecondary.options" data="qbperf.chartSecondary.data" api="qbperf.chartSecondary.api"></nvd3>
         </div>
     </div>
     <div class="row" ng-show="qbperf.dataset">

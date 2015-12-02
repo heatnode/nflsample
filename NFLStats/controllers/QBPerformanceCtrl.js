@@ -4,19 +4,24 @@
     //use "controller as" syntax
 
     self.model = {
+        //selections
         selectedQB: null, 
         selectedYear: '2015',
-        selectedType: 'cmpPctLine',
+        selectedType: 'cmpPYAAllYears',
         selectedWeek: null,
         weekDetails: null,
         showSecondaryChart: true
     };
-    self.summary = {};
+    //datasets
+    self.summary = null;
     self.dataset = null;
+    //options
     self.qbOptions = qbData.options;
     self.yearOptions = transform.years;
     self.chartOptions = charts.charts;
+    //charts
     self.chart = charts.getChart(self.model.selectedType);
+    self.chartSecondary = charts.getChart('cmpPctBarAllYears');
 
     self.changeQB = function (qb) {
         qbData.setQB(qb).then(function (result) {
@@ -24,9 +29,11 @@
             self.dataset = result;
             self.dsForYear = transform.gamesForYear(self.dataset, self.model.selectedYear);
             self.summary = transform.getQBSummary(self.dataset);
-            var sumop = transform.getOpponentSummary(self.dataset);
-            console.log(sumop);
-            charts.updateChart(self.chart, self.dsForYear);
+            //var sumop = transform.getOpponentSummary(self.dataset);
+            //todo: how  to pick all years?
+            //charts.updateChart(self.chart, self.dsForYear);
+            charts.updateChart(self.chart, self.summary);
+            charts.updateChart(self.chartSecondary, self.summary);
         });
     }
 
@@ -35,6 +42,7 @@
             self.model.weekDetails = null;
             self.dsForYear = transform.gamesForYear(self.dataset, year);
             charts.updateChart(self.chart, self.dsForYear);
+            charts.updateChart(self.chartSecondary, self.summary);
         }
     }
     

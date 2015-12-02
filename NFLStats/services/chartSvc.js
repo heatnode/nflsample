@@ -173,12 +173,14 @@
             }
         },
         //year charts - this would be refactored with other line chart
+        //todo: does this chart need to be special?
         cmpPctLineAllYears: {
-            updateDataFn: updateCmpPctLineAllYears,
+            updateDataFn: updateCmpPctLineAllYears, //note similar but needs date instead of week
             options: {
                 chart: {
+                    //type: 'discreteBarChart',
                     type: 'lineChart',
-                    height: 450,
+                    height: 400, //might be only diff (plus title)
                     margin: {
                         top: 20,
                         right: 20,
@@ -194,25 +196,23 @@
                     interactiveLayer: {
                         tooltip: {
                             headerFormatter: function (hdr) {
-                                //todo: bit of a hack here
-                                //if (this.selectedWeek != hdr) {
-                                //    this.selectedWeek = hdr;
-                                //    $rootScope.$broadcast('tooltip:updated', hdr);
-                                //}
                                 return "Week " + hdr;
                             }
-                            //contentGenerator: function (data) {
-                            //    chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel
-                            //    return 
-                            //}
-                            //    //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
-                            //    }
                         }
                     },
+ 
                     useInteractiveGuideline: true,
-                    forceX: [0],
+                   //forceX: [2010],
+                    //yDomain: [45, 75],
                     xAxis: {
-                        axisLabel: 'Week'
+                        axisLabel: 'Date',
+                        //tickFormat: function (d) {
+                        //    debugger;
+                        //    return d3.time.format("%x")(new Date(d));
+                        //    console.log(d);
+                        ////return d3.time.format("%H")(new Date(d));
+                        ////d3.time.format('%x')()
+                        //},
                     },
                     yAxis: {
                         axisLabel: 'Completion %',
@@ -220,7 +220,89 @@
                     }
                 }
             }
+        },
+        cmpPctBarAllYears: {
+            updateDataFn: updateCmpPctBarAllYears,
+            options: {
+                chart: {
+                    type: 'discreteBarChart',
+                    //type: 'lineChart',
+                    height: 400,
+                    margin: {
+                        top: 20,
+                        right: 20,
+                        bottom: 40,
+                        left: 55
+                    },
+                    x: function (d) { return d.label; },
+                    y: function (d) { return d.value; },
+                    showValues: true,
+                    valueFormat: function (d) {
+                        return d3.format(',.2f')(d);
+                    },
+                    interactiveLayer: {
+                        tooltip: {
+                            headerFormatter: function (hdr) {
+                                return "Year " + hdr;
+                            }
+                        }
+                    },
+                    useInteractiveGuideline: true,
+                    // forceX: [2010],
+                    yDomain: [45, 75],
+                    xDomain: [2011, 2012, 2013, 2014, 2015],
+                    xAxis: {
+                        axisLabel: 'year'
+                    },
+                    yAxis: {
+                        axisLabel: 'Completion %',
+                        axisLabelDistance: -10
+                    }
+                }
+            }
+        },
+        cmpPYAAllYears: {
+            updateDataFn: updatePYABarAllYears,
+            options: {
+                chart: {
+                    type: 'discreteBarChart',
+                    //type: 'lineChart',
+                    height: 400,
+                    margin: {
+                        top: 20,
+                        right: 20,
+                        bottom: 40,
+                        left: 55
+                    },
+                    x: function (d) { return d.label; },
+                    y: function (d) { return d.value; },
+                    showValues: true,
+                    valueFormat: function (d) {
+                        return d3.format(',.2f')(d);
+                    },
+                    interactiveLayer: {
+                        tooltip: {
+                            headerFormatter: function (hdr) {
+                                return "Year " + hdr;
+                            }
+                        }
+                    },
+                    useInteractiveGuideline: true,
+                    // forceX: [2010],
+                    //yDomain: [45, 75],
+                    xDomain:[2011,2012,2013,2014,2015],
+                    xAxis: {
+                        axisLabel: 'year'
+                    },
+                    yAxis: {
+                        axisLabel: 'Pass Yards Per Attempt',
+                        axisLabelDistance: -10
+                    }
+                }
+            }
         }
+
+        
     }
     
     service.charts = Object.keys(chartTypeDefs);
@@ -276,7 +358,7 @@
             values: [] 
         };
 
-        var weekIdx = ds.getIndex("week");
+        var weekIdx = ds.getIndex("gameDate");
         var cmpPctIdx = ds.getIndex("CmpPct");
 
         ds.rows.forEach(function (row) {
@@ -293,28 +375,87 @@
         return [cmpPctSeries];
     }
 
-    //refactor with above
+    //refactor with above and the bar one
     //todo: just take in summary dataset insetad of yearly
-    function updateCmpPctLineYears(ds) {
+    function updateCmpPctLineAllYears(ds) {
         var cmpPctSeries = {
             key: "Completion %",
             values: []
         };
 
-        var weekIdx = ds.getIndex("week");
+        var gdIdx = ds.getIndex("gameDate");
         var cmpPctIdx = ds.getIndex("CmpPct");
 
         ds.rows.forEach(function (row) {
-            //var label = "Week " + row[weekIdx];
-            var label = row[weekIdx];
+            //yuck
+            var label = row[gdIdx].substring(0, 10).replace(/-/g, "");
+            console.log(label);
+            cmpPctSeries.values.push({
+                label: label,
+                value: row[cmpPctIdx]
+            })
+           // console.log(label)
+        })
+
+        //invert the order by year
+        //cmpPctSeries.values.sort(function (a, b) {
+        //    return a.value > b.value;
+        //});
+
+        return [cmpPctSeries];
+    }
+
+    //refactor with above
+    //todo: just take in summary dataset insetad of yearly
+    function updateCmpPctBarAllYears(ds) {
+        var cmpPctSeries = {
+            key: "Completion %",
+            values: []
+        };
+
+        var yearIdx = ds.getIndex("Year");
+        var cmpPctIdx = ds.getIndex("CmpPct");
+
+        ds.rows.forEach(function (row) {
+            var label = row[yearIdx];
             cmpPctSeries.values.push({
                 label: label,
                 value: row[cmpPctIdx]
             })
         })
 
-        //first number is attempts, second is completions
-        //note newData is an array
+        //invert the order by year
+        cmpPctSeries.values.sort(function (a, b) {
+            return a.value > b.value;
+        });
+
+        return [cmpPctSeries];
+    }
+
+    //refactor with above
+    //todo: just take in summary dataset insetad of yearly
+    function updatePYABarAllYears(ds) {
+        var cmpPctSeries = {
+            key: "Pass Yards Per Attempt",
+            values: []
+        };
+
+        var yearIdx = ds.getIndex("Year");
+        var pyaIdx = ds.getIndex("PYA");
+
+        ds.rows.forEach(function (row) {
+            var label = row[yearIdx];
+            cmpPctSeries.values.push({
+                label: label,
+                value: row[pyaIdx]
+            })
+        })
+        debugger;
+        //invert the order by year
+        cmpPctSeries.values.sort(function (a, b) {
+            return a.value > b.value;
+        });
+
         return [cmpPctSeries];
     }
 

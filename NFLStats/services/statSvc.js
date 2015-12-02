@@ -27,7 +27,8 @@
     //timePeriod could be game, year, qtr
     function CalcCmpPct(ds, timePeriod) {
         var result = timePeriod[ds.getIndex("Att")] && (timePeriod[ds.getIndex("Cmp")] / timePeriod[ds.getIndex("Att")]) * 100;
-        return Math.round(result);
+        //return Math.round(result);
+        return result.toFixed(1);
     }
 
     function CalcYdsPerAtt(ds, timePeriod) {
