@@ -34,11 +34,19 @@
             </form>
         </div>
     </div>
-    <div class="row">
+    
+    <div class="row" ng-show="!qbperf.selections.QB">
+        <!--todo: just offset or whatever-->
+        <div class="col-sm-8 col-sm-offset-3">
+            <div class="alert alert-info helpmsg" role="alert"><h4>Getting Started</h4> Select a quarterback from the dropdown to get started.</div>
+        </div>
+    </div>
+    <div class="row" ng-show="qbperf.selections.QB">
         <div class="col-sm-3">
-            <img class="img-responsive img-circle center-block hidden-xs" 
-            ng-src="{{qbperf.data.fullDS.qbImgSrc || ''}}" alt="{{ qbperf.selections.QB }}"/>
-            <div ng-if="qbperf.selections.QB">
+                <img class="img-responsive img-circle center-block hidden-xs qbImg"
+                     ng-src="{{qbperf.data.fullDS.qbImgSrc || ''}}" alt="{{ qbperf.selections.QB }}" />
+
+            <div >
                 <table class="table table-responsive table-condensed ">
                     <thead>
                         <tr>
@@ -62,10 +70,14 @@
             </div>
         </div>
         <div ng-class="qbperf.selections.selectedDef.isSummaryDef ? 'col-sm-4' : 'col-sm-9'">
-            <nvd3 options="qbperf.chart.options" data="qbperf.chart.data" api="qbperf.chart.api"></nvd3>
+            <div class="chartContainer">
+                <nvd3 options="qbperf.chart.options" data="qbperf.chart.data" api="qbperf.chart.api"></nvd3>
+            </div>
         </div>
         <div class="col-sm-4" ng-show="qbperf.selections.selectedDef.isSummaryDef">
-            <nvd3 options="qbperf.chartSecondary.options" data="qbperf.chartSecondary.data" api="qbperf.chartSecondary.api"></nvd3>
+            <div class="chartContainer">
+                <nvd3 options="qbperf.chartSecondary.options" data="qbperf.chartSecondary.data" api="qbperf.chartSecondary.api"></nvd3>
+            </div>
         </div>
     </div>
     <div class="row" ng-show="qbperf.selections.selectedDef.dataType == 'weekly'">
@@ -97,7 +109,7 @@
                 <!-- Default panel contents -->
                 <div class="panel-heading clearfix">
                     <div class="col-sm-2">
-                        <img class="img-responsive img-circle center-block qbImg" ng-src="{{qbperf.selections.weekDetails.teamImage || ''}}" alt="" />
+                        <img class="img-responsive img-circle center-block" ng-src="{{qbperf.selections.weekDetails.teamImage || ''}}" alt="" />
                     </div>
                     <div class="col-sm-8 text-center">
                         <h4>{{qbperf.selections.weekDetails.qbName}}</h4>
@@ -119,6 +131,7 @@
                 </table>-->
             </div>
         </div>
+
     </div>
 
     

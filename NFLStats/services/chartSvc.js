@@ -7,36 +7,11 @@
         updateChart: updateChartData
         //change: change
     }
-    
-    var defaultOptions = { 
-        //noData: "Please select a quarterback",
-        title: {
-            enable: true,
-            text: 'Title for Line Chart'
-        },
-        subtitle: {
-            enable: true,
-            text: 'Subtitle for simple line chart. Lorem ipsum dolor sit amet, at eam blandit sadipscing, vim adhuc sanctus disputando ex, cu usu affert alienum urbanitas.',
-            css: {
-                'text-align': 'center',
-                'margin': '10px 13px 0px 7px'
-                }
-        },
-        caption: {
-            enable: true,
-            html: '<b>Figure 1.</b> Lorem ipsum dolor sit amet, at eam blandit sadipscing, <span style="text-decoration: underline;">vim adhuc sanctus disputando ex</span>, cu usu affert alienum urbanitas. <i>Cum in purto erat, mea ne nominavi persecuti reformidans.</i> Docendi blandit abhorreant ea has, minim tantas alterum pro eu. <span style="color: darkred;">Exerci graeci ad vix, elit tacimates ea duo</span>. Id mel eruditi fuisset. Stet vidit patrioque in pro, eum ex veri verterem abhorreant, id unum oportere intellegam nec<sup>[1, <a href="https://github.com/krispo/angular-nvd3" target="_blank">2</a>, 3]</sup>.',
-            css: {
-                'text-align': 'justify',
-                'margin': '10px 13px 0px 7px'
-            }
-        },
-         allYearColors: d3.scale.category20b().domain([2011, 2012, 2013, 2014, 2015])
-    }
 
     //shared options across charts
     function basicChartOptions() {
         return {
-            height: 450,
+            height: 400,
             duration: 200,
             margin: {
                 top: 20,
@@ -58,28 +33,14 @@
             type: 'discreteBarChart',
             height: 400, //todo: slightly diff
             color: function (o, pos) { return allYearColors(o.label); },
-            //interactiveLayer: {
-            //    tooltip: {
-            //        headerFormatter: function (hdr) {
-            //            return "Year " + hdr;
-            //        }
-            //    }
-            //},
             discretebar: {
-                dispatch: { //container of event handlers
-                    //elementMousemove: function (e) {
-                    //    console.log("Mouse move (x,y) coordinates: ", e.mouseX, e.mouseY);
-                    //},
+                dispatch: { 
                     elementClick: function (e) {
-                        //console.log(targetkey);
-                        //console.log(e);
-                        //e.data.label
                         var year = e.data.label;
                         $rootScope.$broadcast('chartSvc:summaryBarClick',targetkey, year);
                     },
                 }
             },
-           // useInteractiveGuideline: false,
             xAxis: {
                 axisLabel: 'Year'
             }
@@ -93,6 +54,10 @@
             dataType:"weekly",
             updateDataFn: updateCmpOverAtt,
             options: {
+                title: {
+                    enable: true,
+                    text: 'Completions and Incompletions (Total Attempts) for each week'
+                },
                 chart: angular.merge(basicChartOptions(), {
                     type: 'multiBarChart',
                     legend: {
@@ -115,6 +80,10 @@
             dataType: "weekly",
             updateDataFn: updateCmpPctLine,
             options: {
+                title: {
+                    enable: true,
+                    text: 'Completion Percentage by week'
+                },
                 chart: angular.merge(basicChartOptions(), {
                     type: 'lineChart',
                     interactiveLayer: {
@@ -136,12 +105,47 @@
                 })
             }
         },
+        cmpPYALine: {
+            label: "Pass Yds/Att by Week",
+            dataType: "weekly",
+            updateDataFn: updatePYALine,
+            options: {
+                title: {
+                    enable: true,
+                    text: 'Passing Yards per Attept by Week'
+                },
+                chart: angular.merge(basicChartOptions(), {
+                    type: 'lineChart',
+                    interactiveLayer: {
+                        tooltip: {
+                            headerFormatter: function (hdr) {
+                                return "Week " + hdr;
+                            }
+                        }
+                    },
+                    useInteractiveGuideline: true,
+                    forceX: [0],
+                    yDomain:[0,15],
+                    xAxis: {
+                        axisLabel: 'Week'
+                    },
+                    yAxis: {
+                        axisLabel: 'Pass Yards Per Attempt',
+                        axisLabelDistance: -10
+                    }
+                })
+            }
+        },
         //year charts 
         cmpPctAllYears: {
             label: "Completion % by Year",
             dataType: "yearly",
             updateDataFn: updateCmpPctBarAllYears,
             options: {
+                title: {
+                    enable: true,
+                    text: 'Completion Percentage by Year'
+                },
                 chart: angular.merge(summaryChartOptions('cmpPctLine'), {
                     yDomain: [45, 75],
                     xDomain: [2011, 2012, 2013, 2014, 2015],
@@ -154,28 +158,26 @@
         },
 
         cmpPYAAllYears: {
-            label: "Pass Yds by Year",
+            label: "Pass Yds/Att by Year",
             dataType: "yearly",
             updateDataFn: updatePYABarAllYears,
             options: {
-                chart:angular.merge(summaryChartOptions(), {
+                title: {
+                    enable: true,
+                    text: 'Passing Yards per Attept by Year'
+                },
+                chart: angular.merge(summaryChartOptions('cmpPYALine'), {
                     xDomain:[2011,2012,2013,2014,2015],
                     yAxis: {
                         axisLabel: 'Pass Yards Per Attempt',
                         axisLabelDistance: -10
-                    },
-                    callback: function (ch) {
-                        //d3.selectAll(".nv-bar").on('click', function (e, b, c) {
-                        //    debugger;
-                        //    console.log(e);
-                        //    var bdf = ch;
-                        //});
                     }
                 })
             }
         }
     }
     
+    //return array that contains objects that describe the chart definitions
     service.charts = Object.keys(chartTypeDefs).map(function (key) {
         var chartDetailObj = {
             label: chartTypeDefs[key].label,
@@ -203,85 +205,86 @@
         chart.api.refreshWithTimeout(5);
     }
 
-    function updateLinePlusBar(ds) {
-        var cmpPctSeries = {
-            key: "Completion %",
-            values: [],
-        };
-
-        var ydsAttSeries = {
-            key: "Yds per Attempt",
-            values: [],
-            bar: true,
-        };
-
-        var weekIdx = ds.getIndex("week");
-        var cmpPctIdx = ds.getIndex("CmpPct");
-        var ydAttIdx = ds.getIndex("PYA");
-
-        ds.rows.forEach(function (row) {
-            //var label = "Week " + game.week;
-            var label = row[weekIdx];
-            cmpPctSeries.values.push({ x: label, y: row[cmpPctIdx] });
-            ydsAttSeries.values.push({x: label, y: row[ydAttIdx]});
-        })
-
-        return [ydsAttSeries, cmpPctSeries];
+    
+    function updatePYALine(ds) {
+        return updateWeekLineData(ds, "Pass Yards Per Attempt", "PYA");
     }
-
 
     function updateCmpPctLine(ds) {
-        var cmpPctSeries = {
-            key: "Completion %",
-            values: [] 
-        };
-
-        var weekIdx = ds.getIndex("week");
-        var cmpPctIdx = ds.getIndex("CmpPct");
-
-        ds.rows.forEach(function (row) {
-            //var label = "Week " + row[weekIdx];
-            var label = row[weekIdx];
-            cmpPctSeries.values.push({
-                label: label,
-                value: row[cmpPctIdx]
-            })
-        })
-
-        //first number is attempts, second is completions
-        //note newData is an array
-        return [cmpPctSeries];
+        return updateWeekLineData(ds, "Completion %", "CmpPct");
     }
 
-    //refactor with above and the bar one
-    //todo: just take in summary dataset insetad of yearly
-    function updateCmpPctLineAllYears(ds) {
-        var cmpPctSeries = {
-            key: "Completion %",
+    function updateWeekLineData(ds, key, stat) {
+        var series = {
+            key: key,
             values: []
         };
 
-        var gdIdx = ds.getIndex("gameDate");
-        var cmpPctIdx = ds.getIndex("CmpPct");
+        var weekIdx = ds.getIndex("week");
+        var statIdx = ds.getIndex(stat);
 
         ds.rows.forEach(function (row) {
-            //yuck
-            var label = row[gdIdx].substring(0, 10).replace(/-/g, "");
-            console.log(label);
-            cmpPctSeries.values.push({
+            var label = row[weekIdx];
+            series.values.push({
                 label: label,
-                value: row[cmpPctIdx]
+                value: row[statIdx]
             })
-           // console.log(label)
         })
-
-        //invert the order by year
-        //cmpPctSeries.values.sort(function (a, b) {
-        //    return a.value > b.value;
-        //});
-
-        return [cmpPctSeries];
+        return [series];
     }
+
+    //function updateCmpPctLine(ds) {
+    //    var cmpPctSeries = {
+    //        key: "Completion %",
+    //        values: [] 
+    //    };
+
+    //    var weekIdx = ds.getIndex("week");
+    //    var cmpPctIdx = ds.getIndex("CmpPct");
+
+    //    ds.rows.forEach(function (row) {
+    //        //var label = "Week " + row[weekIdx];
+    //        var label = row[weekIdx];
+    //        cmpPctSeries.values.push({
+    //            label: label,
+    //            value: row[cmpPctIdx]
+    //        })
+    //    })
+
+    //    //first number is attempts, second is completions
+    //    //note newData is an array
+    //    return [cmpPctSeries];
+    //}
+
+    //refactor with above and the bar one
+    //todo: just take in summary dataset insetad of yearly
+    //function updateCmpPctLineAllYears(ds) {
+    //    var cmpPctSeries = {
+    //        key: "Completion %",
+    //        values: []
+    //    };
+
+    //    var gdIdx = ds.getIndex("gameDate");
+    //    var cmpPctIdx = ds.getIndex("CmpPct");
+
+    //    ds.rows.forEach(function (row) {
+    //        //yuck
+    //        var label = row[gdIdx].substring(0, 10).replace(/-/g, "");
+    //        console.log(label);
+    //        cmpPctSeries.values.push({
+    //            label: label,
+    //            value: row[cmpPctIdx]
+    //        })
+    //       // console.log(label)
+    //    })
+
+    //    //invert the order by year
+    //    //cmpPctSeries.values.sort(function (a, b) {
+    //    //    return a.value > b.value;
+    //    //});
+
+    //    return [cmpPctSeries];
+    //}
 
     //refactor with above
     //todo: just take in summary dataset insetad of yearly
