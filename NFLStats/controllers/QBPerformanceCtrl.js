@@ -1,70 +1,89 @@
 ﻿var QBPerformanceCtrl = function ($scope, qbData, transform, charts) {
 
-    var self = this; //for controller as syntax later
-    //use "controller as" syntax
+    var self = this;
+    //todo: create new chart type "Summary or Overview" which will go back to 
+    //the double chart view
+    //also, create an option that says whether to show weekly stuff or not based on given chart
 
-    self.model = {
-        //selections
-        selectedQB: null, 
-        selectedYear: '2015',
-        selectedType: 'cmpPYAAllYears',
+    //selections
+    self.selections = {
+        QB: null, 
+        year: '2015',
+        selectedType: 'cmpPctLine',
         selectedWeek: null,
         weekDetails: null,
-        showSecondaryChart: true
+        showSecondaryChart: false
     };
-    //datasets
-    self.summary = null;
-    self.dataset = null;
+
     //options
-    self.qbOptions = qbData.options;
-    self.yearOptions = transform.years;
-    self.chartOptions = charts.charts;
+    self.options = {
+        qbs: qbData.options,
+        years: transform.years,
+        charts: charts.charts
+    }
+
+    //datasets
+    self.data = {
+        summaryDS:null,
+        fullDS: null,
+        yearDS: null
+    }
+
     //charts
-    self.chart = charts.getChart(self.model.selectedType);
+    self.chart = charts.getChart(self.selections.selectedType);
     self.chartSecondary = charts.getChart('cmpPctBarAllYears');
 
     self.changeQB = function (qb) {
         qbData.setQB(qb).then(function (result) {
-            self.model.weekDetails = null;
-            self.dataset = result;
-            self.dsForYear = transform.gamesForYear(self.dataset, self.model.selectedYear);
-            self.summary = transform.getQBSummary(self.dataset);
-            //var sumop = transform.getOpponentSummary(self.dataset);
+            self.selections.weekDetails = null;
+            self.data.fullDS = result;
+            self.data.yearDS = transform.gamesForYear(self.data.fullDS, self.selections.year);
+            self.data.summaryDS  = transform.getQBSummary(self.data.fullDS);
+            //var sumop = transform.getOpponentSummary(self.data.fullDS);
             //todo: how  to pick all years?
-            //charts.updateChart(self.chart, self.dsForYear);
-            charts.updateChart(self.chart, self.summary);
-            charts.updateChart(self.chartSecondary, self.summary);
+            //charts.updateChart(self.chart, self.data.yearDS);
+            charts.updateChart(self.chart, self.data.yearDS);
+            charts.updateChart(self.chartSecondary, self.data.summaryDS);
         });
     }
 
     self.changeYear = function (year) {
-        if (self.dataset) {
-            self.model.weekDetails = null;
-            self.dsForYear = transform.gamesForYear(self.dataset, year);
-            charts.updateChart(self.chart, self.dsForYear);
-            charts.updateChart(self.chartSecondary, self.summary);
+        if (self.data.fullDS) {
+            self.selections.weekDetails = null;
+            self.data.yearDS = transform.gamesForYear(self.data.fullDS, year);
+            charts.updateChart(self.chart, self.data.yearDS);
+
+            charts.updateChart(self.chartSecondary, self.data.summaryDS);
+        }
+    }
+
+    self.changeChart = function (chartType) {
+        if (self.data.fullDS) {
+            self.chart.statType = chartType;
+            charts.updateChart(self.chart, self.data.yearDS);
         }
     }
     
+    
     self.selectWeek = function (row) {
-        self.model.selectedWeek = row;
-        self.model.weekDetails = transform.getDetailsForWeek(self.dsForYear, row);
+        self.selections.selectedWeek = row;
+        self.selections.weekDetails = transform.getDetailsForWeek(self.data.yearDS, row);
     }
     
     //todo: review
-    $scope.$watch(
-            function watchSelections(scope) {
-                // Return the "result" of the watch expression.
-                return self.model.selectedType;
-            },
-            function handleSelections(newValue, oldValue) {
-                if (self.dataset) {
-                    self.chart.statType = newValue;
-                    //self.chart = charts.getChart(newValue);
-                    charts.updateChart(self.chart, self.dsForYear);
-                }
-            }
-        );
+    //$scope.$watch(
+    //        function watchSelections(scope) {
+    //            // Return the "result" of the watch expression.
+    //            return self.selections.selectedType;
+    //        },
+    //        function handleSelections(newValue, oldValue) {
+    //            if (self.data.fullDS) {
+    //                self.chart.statType = newValue;
+    //                //self.chart = charts.getChart(newValue);
+    //                charts.updateChart(self.chart, self.data.yearDS);
+    //            }
+    //        }
+    //    );
 
     self.showColumn = function (idx, dataset) {
         return (dataset.displayCols.indexOf(idx) != -1);

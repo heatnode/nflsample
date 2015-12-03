@@ -29,7 +29,8 @@
                 'text-align': 'justify',
                 'margin': '10px 13px 0px 7px'
             }
-        }
+        },
+         allYearColors: d3.scale.category20b().domain([2011, 2012, 2013, 2014, 2015])
     }
 
     var chartTypeDefs = {
@@ -167,6 +168,10 @@
                     },
                     callback: function (chart) {
                         //todo: could setup events here possibly
+                        //chart.lines.dispatch.on('elementClick', function (e) {
+                        //    console.log(e);
+                        //    //alert("You've clicked on " + e.series.key + " - " + e.point.x);
+                        //});
                         console.log("!!! lineChart callback !!!");
                     }
                 }
@@ -234,6 +239,10 @@
                         bottom: 40,
                         left: 55
                     },
+                    //color: function (o, pos) { return d3.scale.category10()[pos]; },
+                    //color: function (o, pos) { return defaultOptions.allYearColors(pos); },
+                    //color: defaultOptions.allYearColors,
+                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
                     showValues: true,
@@ -274,6 +283,8 @@
                         bottom: 40,
                         left: 55
                     },
+                    //color: function (o, pos) { return d3.scale.category10().range()[pos]; },
+                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
                     showValues: true,
@@ -297,6 +308,20 @@
                     yAxis: {
                         axisLabel: 'Pass Yards Per Attempt',
                         axisLabelDistance: -10
+                    },
+                    callback: function (c) {
+                        //todo: could setup events here possibly
+                        //debugger;
+                        //var _chart = c;
+                        //c.bars.dispatch.on('elementClick', function (e) {
+                        //    console.log(e);
+                        //    //alert("You've clicked on " + e.series.key + " - " + e.point.x);
+                        //});
+                        d3.selectAll(".nv-bar").on('click', function (e) {
+                            //debugger;
+                            console.log(e);
+                        });
+                        //console.log("!!! lineChart callback !!!");
                     }
                 }
             }
@@ -358,7 +383,7 @@
             values: [] 
         };
 
-        var weekIdx = ds.getIndex("gameDate");
+        var weekIdx = ds.getIndex("week");
         var cmpPctIdx = ds.getIndex("CmpPct");
 
         ds.rows.forEach(function (row) {
@@ -450,7 +475,7 @@
                 value: row[pyaIdx]
             })
         })
-        debugger;
+        //debugger;
         //invert the order by year
         cmpPctSeries.values.sort(function (a, b) {
             return a.value > b.value;
