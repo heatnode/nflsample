@@ -19,12 +19,13 @@
     function getDetailsForWeek(ds, week) {
         var detailsObj = {
             data: {},
-            gameDateString: $filter('date')(new Date(week[ds.getIndex('gameDate')]),'MM/dd/yyyy'),
+            gameDateString: $filter('date')(week[ds.getIndex('gameDate')].substring(0,10), 'MM/dd/yyyy'),
             opponentImage: week[ds.getIndex('opponentImage')],
             teamImage: week[ds.getIndex('teamImage')],
             qbName: week[ds.getIndex('fullName')]
         };
-        var indexToIgnore = [0, 1, 2,5,7,9];
+
+        var indexToIgnore = [0,1,2,5,7,9];
         ds.header.forEach(function (hdrObj, idx) {
             //if this is NOT in the list of ignored indexes
             if (indexToIgnore.indexOf(idx) == -1) {
