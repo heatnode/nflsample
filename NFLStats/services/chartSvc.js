@@ -33,33 +33,73 @@
          allYearColors: d3.scale.category20b().domain([2011, 2012, 2013, 2014, 2015])
     }
 
+    //shared options across charts
+    function basicChartOptions() {
+        return {
+            height: 450,
+            duration: 200,
+            margin: {
+                top: 20,
+                right: 20,
+                bottom: 50,
+                left: 55
+            },
+            x: function (d) { return d.label; },
+            y: function (d) { return d.value; },
+            showValues: true,
+        }
+    }
+
+    function summaryChartOptions(targetkey) {
+        var basic = basicChartOptions();
+        var allYearColors = d3.scale.category20b().domain([2011, 2012, 2013, 2014, 2015]);
+
+        var summary = {
+            type: 'discreteBarChart',
+            height: 400, //todo: slightly diff
+            color: function (o, pos) { return allYearColors(o.label); },
+            //interactiveLayer: {
+            //    tooltip: {
+            //        headerFormatter: function (hdr) {
+            //            return "Year " + hdr;
+            //        }
+            //    }
+            //},
+            discretebar: {
+                dispatch: { //container of event handlers
+                    //elementMousemove: function (e) {
+                    //    console.log("Mouse move (x,y) coordinates: ", e.mouseX, e.mouseY);
+                    //},
+                    elementClick: function (e) {
+                        //console.log(targetkey);
+                        //console.log(e);
+                        //e.data.label
+                        var year = e.data.label;
+                        $rootScope.$broadcast('chartSvc:summaryBarClick',targetkey, year);
+                    },
+                }
+            },
+           // useInteractiveGuideline: false,
+            xAxis: {
+                axisLabel: 'Year'
+            }
+        }
+        return angular.merge(basic, summary);
+    }
+
     var chartTypeDefs = {
         cmpOverAttempts: {
             label: "Completions/Att by Week",
             dataType:"weekly",
             updateDataFn: updateCmpOverAtt,
             options: {
-                chart: {
-                    height: 450,
-                    duration: 200,
-                    margin: {
-                        top: 20,
-                        right: 20,
-                        bottom: 50,
-                        left: 55
-                    },
-                    x: function (d) { return d.label; },
-                    y: function (d) { return d.value; },
-                    showValues: true,
-
+                chart: angular.merge(basicChartOptions(), {
                     type: 'multiBarChart',
                     legend: {
                         updateState: false
                     },
                     showControls: false,
                     stacked: true,
-                    //stackOffset:"expand",
-                    
                     xAxis: {
                         axisLabel: 'Weeks'
                     },
@@ -67,7 +107,7 @@
                         axisLabel: 'Attempts',
                         axisLabelDistance: -10
                     }
-                }
+                })
             }
         },
         cmpPctLine: {
@@ -75,18 +115,7 @@
             dataType: "weekly",
             updateDataFn: updateCmpPctLine,
             options: {
-                chart: {
-                    height: 450,
-                    margin: {
-                        top: 20,
-                        right: 20,
-                        bottom: 40,
-                        left: 55
-                    },
-                    x: function (d) { return d.label; },
-                    y: function (d) { return d.value; },
-                    showValues: true,
-
+                chart: angular.merge(basicChartOptions(), {
                     type: 'lineChart',
                     interactiveLayer: {
                         tooltip:{
@@ -104,7 +133,7 @@
                         axisLabel: 'Completion %',
                         axisLabelDistance: -10
                     }
-                }
+                })
             }
         },
         //year charts 
@@ -113,39 +142,14 @@
             dataType: "yearly",
             updateDataFn: updateCmpPctBarAllYears,
             options: {
-                chart: {
-
-                    margin: {
-                        top: 20,
-                        right: 20,
-                        bottom: 40,
-                        left: 55
-                    },
-                    x: function (d) { return d.label; },
-                    y: function (d) { return d.value; },
-                    showValues: true,
-
-                    type: 'discreteBarChart',
-                    height: 400, //todo: slightly diff
-                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
-                    interactiveLayer: {
-                        tooltip: {
-                            headerFormatter: function (hdr) {
-                                return "Year " + hdr;
-                            }
-                        }
-                    },
-                    useInteractiveGuideline: true,
+                chart: angular.merge(summaryChartOptions('cmpPctLine'), {
                     yDomain: [45, 75],
                     xDomain: [2011, 2012, 2013, 2014, 2015],
-                    xAxis: {
-                        axisLabel: 'Year'
-                    },
                     yAxis: {
                         axisLabel: 'Completion %',
                         axisLabelDistance: -10
                     }
-                }
+                })
             }
         },
 
@@ -154,46 +158,20 @@
             dataType: "yearly",
             updateDataFn: updatePYABarAllYears,
             options: {
-                chart: {
-                    
-                    margin: {
-                        top: 20,
-                        right: 20,
-                        bottom: 40,
-                        left: 55
-                    },
-                    x: function (d) { return d.label; },
-                    y: function (d) { return d.value; },
-                    showValues: true,
-                    //todo: note: exactly like other year except for label on y and ydomain
-                    type: 'discreteBarChart',
-                    height: 400,
-                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
-                    valueFormat: function (d) {
-                        return d3.format(',.2f')(d);
-                    },
-                    interactiveLayer: {
-                        tooltip: {
-                            headerFormatter: function (hdr) {
-                                return "Year " + hdr;
-                            }
-                        }
-                    },
-                    useInteractiveGuideline: true,
+                chart:angular.merge(summaryChartOptions(), {
                     xDomain:[2011,2012,2013,2014,2015],
-                    xAxis: {
-                        axisLabel: 'year'
-                    },
                     yAxis: {
                         axisLabel: 'Pass Yards Per Attempt',
                         axisLabelDistance: -10
                     },
-                    callback: function (c) {
-                        d3.selectAll(".nv-bar").on('click', function (e) {
-                            console.log(e);
-                        });
+                    callback: function (ch) {
+                        //d3.selectAll(".nv-bar").on('click', function (e, b, c) {
+                        //    debugger;
+                        //    console.log(e);
+                        //    var bdf = ch;
+                        //});
                     }
-                }
+                })
             }
         }
     }

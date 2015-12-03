@@ -49,12 +49,7 @@
             self.data.fullDS = result;
             self.data.yearDS = transform.gamesForYear(self.data.fullDS, self.selections.year);
             self.data.summaryDS  = transform.getQBSummary(self.data.fullDS);
-            //var sumop = transform.getOpponentSummary(self.data.fullDS);
-            //todo: how  to pick all years?
-            //charts.updateChart(self.chart, self.data.yearDS);
             updateCharts();
-            //charts.updateChart(self.chart, self.data.yearDS);
-            //charts.updateChart(self.chartSecondary, self.data.summaryDS);
         });
     }
 
@@ -63,16 +58,12 @@
             self.selections.weekDetails = null;
             self.data.yearDS = transform.gamesForYear(self.data.fullDS, year);
             updateCharts();
-            //charts.updateChart(self.chart, self.data.yearDS);
-            //charts.updateChart(self.chartSecondary, self.data.summaryDS);
         }
     }
 
     self.changeChart = function (key) {
         if (self.data.fullDS) {
             updateCharts();
-            //self.chart.key = key;
-            //charts.updateChart(self.chart, self.data.yearDS);
         }
     }
 
@@ -94,6 +85,20 @@
         self.selections.selectedWeek = row;
         self.selections.weekDetails = transform.getDetailsForWeek(self.data.yearDS, row);
     }
+
+    //used for chart drilldown
+    $scope.$on('chartSvc:summaryBarClick', function (e, key, year) {
+        //find def by key so we can select it
+        //debugger;
+        var def = self.options.charts.filter(function (o) {
+            return o.key == key;
+        })[0];
+        self.selections.selectedDef = def;
+        self.selections.year = year;
+        $scope.$apply();
+        //kind of side-effecty but this will update the chart as well
+        self.changeYear(year);
+    });
     
     //todo: review
     //$scope.$watch(
