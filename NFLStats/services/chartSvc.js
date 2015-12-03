@@ -1,11 +1,9 @@
 ﻿var chartSvc = function ($rootScope, $filter) {
 
-    //var charts = Object.keys(chartTypeDefs);
 
     var service = {
         getChart: getChart,
         updateChart: updateChartData
-        //change: change
     }
 
     //shared options across charts
@@ -187,6 +185,18 @@
         return chartDetailObj;
     });
 
+    //special purpose summary entry
+    var summaryDef = {
+        label: "Summary Charts",
+        dataType: "yearly",
+        key: "cmpPctAllYears",
+        keySecondary: "cmpPYAAllYears",
+        isSummaryDef: true
+    };
+    service.charts.unshift(summaryDef);
+
+    service.getDefaultSummaryDef = function () { return summaryDef; }
+
     return service;  
 
     function getChart(key) {
@@ -233,115 +243,40 @@
         return [series];
     }
 
-    //function updateCmpPctLine(ds) {
-    //    var cmpPctSeries = {
-    //        key: "Completion %",
-    //        values: [] 
-    //    };
-
-    //    var weekIdx = ds.getIndex("week");
-    //    var cmpPctIdx = ds.getIndex("CmpPct");
-
-    //    ds.rows.forEach(function (row) {
-    //        //var label = "Week " + row[weekIdx];
-    //        var label = row[weekIdx];
-    //        cmpPctSeries.values.push({
-    //            label: label,
-    //            value: row[cmpPctIdx]
-    //        })
-    //    })
-
-    //    //first number is attempts, second is completions
-    //    //note newData is an array
-    //    return [cmpPctSeries];
-    //}
-
-    //refactor with above and the bar one
-    //todo: just take in summary dataset insetad of yearly
-    //function updateCmpPctLineAllYears(ds) {
-    //    var cmpPctSeries = {
-    //        key: "Completion %",
-    //        values: []
-    //    };
-
-    //    var gdIdx = ds.getIndex("gameDate");
-    //    var cmpPctIdx = ds.getIndex("CmpPct");
-
-    //    ds.rows.forEach(function (row) {
-    //        //yuck
-    //        var label = row[gdIdx].substring(0, 10).replace(/-/g, "");
-    //        console.log(label);
-    //        cmpPctSeries.values.push({
-    //            label: label,
-    //            value: row[cmpPctIdx]
-    //        })
-    //       // console.log(label)
-    //    })
-
-    //    //invert the order by year
-    //    //cmpPctSeries.values.sort(function (a, b) {
-    //    //    return a.value > b.value;
-    //    //});
-
-    //    return [cmpPctSeries];
-    //}
-
-    //refactor with above
-    //todo: just take in summary dataset insetad of yearly
     function updateCmpPctBarAllYears(ds) {
-        var cmpPctSeries = {
-            key: "Completion %",
-            values: []
-        };
-
-        var yearIdx = ds.getIndex("Year");
-        var cmpPctIdx = ds.getIndex("CmpPct");
-
-        ds.rows.forEach(function (row) {
-            var label = row[yearIdx];
-            cmpPctSeries.values.push({
-                label: label,
-                value: row[cmpPctIdx]
-            })
-        })
-
-        //invert the order by year
-        cmpPctSeries.values.sort(function (a, b) {
-            return a.value > b.value;
-        });
-
-        return [cmpPctSeries];
+        return updateYearBarData(ds, "Completion %", "CmpPct");
     }
 
-    //refactor with above
-    //todo: just take in summary dataset insetad of yearly
     function updatePYABarAllYears(ds) {
-        var cmpPctSeries = {
-            key: "Pass Yards Per Attempt",
+        return updateYearBarData(ds,"Pass Yards Per Attempt","PYA");
+    }
+
+    function updateYearBarData(ds, key, stat) {
+        var series = {
+            key: key,
             values: []
         };
 
         var yearIdx = ds.getIndex("Year");
-        var pyaIdx = ds.getIndex("PYA");
+        var statIdx = ds.getIndex(stat);
 
         ds.rows.forEach(function (row) {
             var label = row[yearIdx];
-            cmpPctSeries.values.push({
+            series.values.push({
                 label: label,
-                value: row[pyaIdx]
+                value: row[statIdx]
             })
         })
-        //debugger;
+
         //invert the order by year
-        cmpPctSeries.values.sort(function (a, b) {
+        series.values.sort(function (a, b) {
             return a.value > b.value;
         });
 
-        return [cmpPctSeries];
+        return [series];
     }
 
     function updateCmpOverAtt(ds) {
-        
         var cmpSeries = {
             key: "Completions",
             values: []
@@ -371,8 +306,6 @@
 
         return [cmpSeries, incmpSeries];
     }
-
-
 
 };
 

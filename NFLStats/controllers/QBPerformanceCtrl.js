@@ -1,23 +1,12 @@
 ﻿var QBPerformanceCtrl = function ($scope, qbData, transform, charts) {
 
     var self = this;
-    //todo: create new chart type "Summary or Overview" which will go back to 
-    //the double chart view
-    //also, create an option that says whether to show weekly stuff or not based on given chart
-    //special purpose summary entry
-    var summaryDef = {
-        label: "Summary Charts",
-        dataType: "yearly",
-        key: "cmpPctAllYears",
-        keySecondary: "cmpPYAAllYears",
-        isSummaryDef:true
-    };
+
     //selections
     self.selections = {
         QB: null, 
         year: '2015',
-        //selectedDef: 'cmpPctLine',
-        selectedDef:summaryDef,
+        selectedDef: charts.getDefaultSummaryDef(),
         selectedWeek: null,
         weekDetails: null,
         showSecondaryChart: false
@@ -29,8 +18,6 @@
         years: transform.years,
         charts: charts.charts
     }
-    
-    self.options.charts.push(summaryDef);
 
     //datasets
     self.data = {
@@ -89,7 +76,6 @@
     //used for chart drilldown
     $scope.$on('chartSvc:summaryBarClick', function (e, key, year) {
         //find def by key so we can select it
-        //debugger;
         var def = self.options.charts.filter(function (o) {
             return o.key == key;
         })[0];
@@ -99,21 +85,6 @@
         //kind of side-effecty but this will update the chart as well
         self.changeYear(year);
     });
-    
-    //todo: review
-    //$scope.$watch(
-    //        function watchSelections(scope) {
-    //            // Return the "result" of the watch expression.
-    //            return self.selections.selectedType;
-    //        },
-    //        function handleSelections(newValue, oldValue) {
-    //            if (self.data.fullDS) {
-    //                self.chart.statType = newValue;
-    //                //self.chart = charts.getChart(newValue);
-    //                charts.updateChart(self.chart, self.data.yearDS);
-    //            }
-    //        }
-    //    );
 
     self.showColumn = function (idx, dataset) {
         return (dataset.displayCols.indexOf(idx) != -1);
