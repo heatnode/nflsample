@@ -1,0 +1,44 @@
+﻿<div class="row">
+    <div class="col-sm-10">
+        <h3>Dev Notes</h3>
+        <p>
+            I decided to use an angular/bootstrap/nvd3 stack for the application. Angular and bootstrap have proven to be a fairly rapid way to get a decent small scale application 
+            or prototype going quickly. Even though this is a prototype, I tried to keep the code reasonably well-organized and normalized.
+            Here are some notes that may help:
+        </p>
+        <p>Most of the relevant code is in a few places:</p>
+        <ul>
+            <li>
+                <b>main.js</b> - sets up the angular app
+            </li>
+            <li>
+                <b>index.html</b> - starting point and nav
+            </li>
+            <li>
+                <b>/services/*.js</b> - this is where most of the service stuff happens, charts, "data shaping", stat calculation, data retrieval
+            </li>
+            <li>
+                <b>/controllers/QBPerformanceCtrl.js</b> - has all the "view logic". In a real application, I would break this down further into
+                either some additional directives or controllers
+            </li>
+            <li>
+                <b>/views/qbperformance.html</b> - has the primary view. Again, I would break this down into smaller pieces if this was a long term application
+            </li>
+        </ul>
+        <p>Other general notes</p>
+        <ul>
+            <li>
+                <p>
+                    I have only done a tiny amount of d3 in the past so much of my effort was spent trying to work with it. I chose nvD3 and an angular directive 
+                    based on nvD3 as a way to get up and running quickly.
+                </p>
+            </li>
+            <li>
+                <p>
+                    There are not of ton of comments. I hope the code is somewhat readable and self-documenting. I try to write long and meaningful function and
+                    variable names.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>

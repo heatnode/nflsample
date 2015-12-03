@@ -92,7 +92,7 @@
         }
     }
 
-    //Get stats for opponent played more than twice in last 3 years
+    //Get stats for opponent played more than twice in last 5 years
     function getOpponentSummary(dataset) {
         //could make this a little smarter
         var summaryDataSet = {
@@ -112,24 +112,7 @@
                 opCounts[opteam] = 0;
             }
             opCounts[opteam] = opCounts[opteam] + 1;
-
-            //var yearDS = gamesForYear(dataset, year);
-            //var tots = yearDS.rows.reduce(function (sumObj, row) {
-            //    sumObj.PsYds = sumObj.PsYds + row[pyIdx];
-            //    sumObj.Att = sumObj.Att + row[attIdx];
-            //    sumObj.Cmp = sumObj.Cmp + row[cmpIdx];
-            //    return sumObj;
-            //}, { PsYds: 0, Att: 0, Cmp: 0 });
-            //summaryDataSet.rows.push([year, tots.PsYds, tots.Att, tots.Cmp]);
         });
-
-        //invert the order by year
-        //summaryDataSet.rows.sort(function (a, b) {
-        //    return a[0] < b[0];
-        //});
-        //addLookup(summaryDataSet);
-        //stats.AddCmpPctToDataSet(summaryDataSet);
-        //stats.AddYdsPerAttToDataSet(summaryDataSet);
         return opCounts;
     }
 

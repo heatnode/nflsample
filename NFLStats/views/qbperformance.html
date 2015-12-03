@@ -21,7 +21,7 @@
                         </li>
                     </ol>
                 </div>
-                <div class="form-group" ng-show="!qbperf.selections.selectedDef.isSummaryDef">
+                <div class="form-group" ng-show="qbperf.selections.QB && qbperf.selections.selectedDef.dataType == 'weekly'">
                     <ol ng-model="qbperf.selections.year" ng-change='qbperf.changeYear(qbperf.selections.year)' class="nya-bs-select" title="Select Year">
                         <li nya-bs-option="o in qbperf.options.years">
                             <a>
@@ -36,9 +36,8 @@
     </div>
     
     <div class="row" ng-show="!qbperf.selections.QB">
-        <!--todo: just offset or whatever-->
         <div class="col-sm-8 col-sm-offset-2">
-            <div class="alert alert-info helpmsg" role="alert"><h4>Getting Started</h4> Select a quarterback from the dropdown to get started.</div>
+            <div class="alert alert-info helpmsg" role="alert"><h4>Getting Started</h4> Select a quarterback from the drop down to get started.</div>
         </div>
     </div>
     <div class="row" ng-show="qbperf.selections.QB">
@@ -81,12 +80,11 @@
         </div>
     </div>
     <div class="row" ng-show="qbperf.selections.QB && qbperf.selections.selectedDef.dataType == 'yearly'">
-        <!--todo: just offset or whatever-->
         <div class="col-sm-8 col-sm-offset-2">
             <div class="alert alert-success helpmsg" role="alert"><h4>Additional Details</h4> Select a weekly chart or click a year on the bar chart to see weekly data.</div>
         </div>
     </div>
-    <div class="row" ng-show="qbperf.selections.selectedDef.dataType == 'weekly' && qbperf.selections.QB">
+    <div class="row" ng-show="qbperf.selections.QB && qbperf.selections.selectedDef.dataType == 'weekly'">
         <div class="col-sm-6">
             <h4 >Weekly Summary</h4>
             <table class="table table-responsive table-hover">
@@ -108,8 +106,11 @@
         </div>
         <div class="col-sm-6">
             <div class="detailPanel center-block" ng-show="!qbperf.selections.weekDetails">
-                <!--todo:tidy up-->
-                <h4 class="text-center">Select a week from summary table to view details</h4>
+                <!--todo:tidy up
+                <h4 class="text-center">Select a week from summary table to view details</h4>-->
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="alert alert-success helpmsg" role="alert"><h4>Additional Details</h4>Select a week from summary table to view details.</div>
+                </div>
             </div>
             <div class="panel panel-default detailPanel center-block" ng-show="qbperf.selections.weekDetails">
                 <!-- Default panel contents -->

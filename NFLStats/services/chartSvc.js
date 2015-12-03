@@ -29,7 +29,7 @@
 
         var summary = {
             type: 'discreteBarChart',
-            height: 400, //todo: slightly diff
+            height: 400, 
             color: function (o, pos) { return allYearColors(o.label); },
             discretebar: {
                 dispatch: { 
@@ -110,7 +110,7 @@
             options: {
                 title: {
                     enable: true,
-                    text: 'Passing Yards per Attept by Week'
+                    text: 'Passing Yards per Attempt by Week'
                 },
                 chart: angular.merge(basicChartOptions(), {
                     type: 'lineChart',
@@ -162,7 +162,7 @@
             options: {
                 title: {
                     enable: true,
-                    text: 'Passing Yards per Attept by Year'
+                    text: 'Passing Yards per Attempt by Year'
                 },
                 chart: angular.merge(summaryChartOptions('cmpPYALine'), {
                     xDomain:[2011,2012,2013,2014,2015],
