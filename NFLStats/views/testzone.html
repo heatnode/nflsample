@@ -38,8 +38,122 @@
     <table></table>
 
 
+
 <script type="text/javascript">
-    console.log('you');
+    cmpPctLineBad: {
+            updateDataFn: updateLinePlusBar,
+            options: {
+            chart: {
+                        type: 'linePlusBarChart',
+                //type: 'multiChart',
+                        height: 450,
+                        margin: {
+                    top: 20,
+                    right: 50,
+                    bottom: 40,
+                    left: 50
+                        },
+                focusEnable:false,
+                showValues: true,
+                valueFormat: function (d) {
+                    return d3.format(',.2f')(d);
+                },
+                useInteractiveGuideline: true,
+                forceX: [0],
+                bars: {
+                    forceX: [0,18],
+                    //forceY: [0],
+                    //yDomain: [0, 25]
+                    },
+                lines: {
+                        forceX: [0,18],
+                    //forceY: [0],
+                    //yDomain: [0, 100]
+                        },
+                // Set min, max values of axis
+                // yDomain1:[0, 100],
+                //yDomain2:[0, 25],
+                xAxis: {
+                        axisLabel: 'Week',
+                        },
+                yAxis1: {
+                        axisLabel: 'Completion %',
+                        axisLabelDistance: -10
+
+                },
+                yAxis2: {
+                        axisLabel: 'Yds attempt',
+                        axisLabelDistance: -10
+                },
+                callback: function (chart) {
+                    //todo: could setup events here possibly
+                    //chart.lines.dispatch.on('elementClick', function (e) {
+                    //    console.log(e);
+                    //    //alert("You've clicked on " + e.series.key + " - " + e.point.x);
+                    //});
+                    console.log("!!! lineChart callback !!!");
+                }
+            }
+            }
+    },
+    </script>
+<script type="text/javascript">
+    cmpPctLineBad: {
+            updateDataFn: updateLinePlusBar,
+            options: {
+            chart: {
+                        type: 'linePlusBarChart',
+                //type: 'multiChart',
+                        height: 450,
+                        margin: {
+                    top: 20,
+                    right: 50,
+                    bottom: 40,
+                    left: 50
+                        },
+                focusEnable:false,
+                showValues: true,
+                valueFormat: function (d) {
+                    return d3.format(',.2f')(d);
+                },
+                useInteractiveGuideline: true,
+                forceX: [0],
+                bars: {
+                    forceX: [0,18],
+                    //forceY: [0],
+                    //yDomain: [0, 25]
+                    },
+                lines: {
+                        forceX: [0,18],
+                    //forceY: [0],
+                    //yDomain: [0, 100]
+                        },
+                // Set min, max values of axis
+                // yDomain1:[0, 100],
+                //yDomain2:[0, 25],
+                xAxis: {
+                        axisLabel: 'Week',
+                        },
+                yAxis1: {
+                        axisLabel: 'Completion %',
+                        axisLabelDistance: -10
+
+                },
+                yAxis2: {
+                        axisLabel: 'Yds attempt',
+                        axisLabelDistance: -10
+                },
+                callback: function (chart) {
+                    //todo: could setup events here possibly
+                    //chart.lines.dispatch.on('elementClick', function (e) {
+                    //    console.log(e);
+                    //    //alert("You've clicked on " + e.series.key + " - " + e.point.x);
+                    //});
+                    console.log("!!! lineChart callback !!!");
+                }
+            }
+            }
+    },
   ///////////////////////////////////////////
   // UTILITY FUNCTIONS
   // Make a key-value object
@@ -183,6 +297,8 @@
   setInterval(function() {
     update(generate_data());
   }, 3500);
+
+
 </script>
 
 

@@ -34,35 +34,32 @@
     }
 
     var chartTypeDefs = {
-        cmpOverAttempts: { 
+        cmpOverAttempts: {
+            label: "Completions/Att by Week",
+            dataType:"weekly",
             updateDataFn: updateCmpOverAtt,
             options: {
                 chart: {
-                    type: 'multiBarChart',
                     height: 450,
-                    showControls:false,
-                    stacked: true,
-                    //stackOffset:"expand",
+                    duration: 200,
                     margin: {
                         top: 20,
                         right: 20,
                         bottom: 50,
                         left: 55
                     },
-                    legend: {
-                        updateState: false,
-                        dispatch: {
-                            legendClick: function (d, i) {
-                            }
-                        }
-                    },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
                     showValues: true,
-                    valueFormat: function (d) {
-                        return d3.format(',.0f')(d);
+
+                    type: 'multiBarChart',
+                    legend: {
+                        updateState: false
                     },
-                    duration: 500,
+                    showControls: false,
+                    stacked: true,
+                    //stackOffset:"expand",
+                    
                     xAxis: {
                         axisLabel: 'Weeks'
                     },
@@ -74,10 +71,11 @@
             }
         },
         cmpPctLine: {
+            label: "Completion % by Week",
+            dataType: "weekly",
             updateDataFn: updateCmpPctLine,
             options: {
                 chart: {
-                    type: 'lineChart',
                     height: 450,
                     margin: {
                         top: 20,
@@ -87,27 +85,15 @@
                     },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
-                    showValues:true,
-                    valueFormat: function (d) {
-                        return d3.format(',.2f')(d);
-                    },
+                    showValues: true,
+
+                    type: 'lineChart',
                     interactiveLayer: {
                         tooltip:{
                             headerFormatter: function (hdr) {
-                                //todo: bit of a hack here
-                                //if (this.selectedWeek != hdr) {
-                                //    this.selectedWeek = hdr;
-                                //    $rootScope.$broadcast('tooltip:updated', hdr);
-                                //}
                                 return "Week " + hdr;
                             }
-                            //contentGenerator: function (data) {
-                            //    chartTypeDefs.cmpOverAttempts.options.chart.yAxis.axisLabel
-                            //    return 
-                            //}
-                            //    //return '<div class="tooltip"><h3>yuck</h3><div>this is my custom content</div><hr><p><strong>test</strong> 45';
-                            //    }
-                            }
+                        }
                     },
                     useInteractiveGuideline: true,
                     forceX:[0],
@@ -121,134 +107,27 @@
                 }
             }
         },
-        cmpPctLineBad: {
-            updateDataFn: updateLinePlusBar,
-            options: {
-                chart: {
-                    type: 'linePlusBarChart',
-                    //type: 'multiChart',
-                    height: 450,
-                    margin: {
-                        top: 20,
-                        right: 50,
-                        bottom: 40,
-                        left: 50
-                    },
-                    focusEnable:false,
-                    showValues: true,
-                    valueFormat: function (d) {
-                        return d3.format(',.2f')(d);
-                    },
-                    useInteractiveGuideline: true,
-                    forceX: [0],
-                    bars: {
-                        forceX: [0,18],
-                        //forceY: [0],
-                        //yDomain: [0, 25]
-                    },
-                    lines: {
-                        forceX: [0,18],
-                        //forceY: [0],
-                        //yDomain: [0, 100]
-                    },
-                    // Set min, max values of axis
-                   // yDomain1:[0, 100],
-                    //yDomain2:[0, 25],
-                    xAxis: {
-                        axisLabel: 'Week',
-                    },
-                    yAxis1: {
-                        axisLabel: 'Completion %',
-                        axisLabelDistance: -10
-
-                    },
-                    yAxis2: {
-                        axisLabel: 'Yds attempt',
-                        axisLabelDistance: -10
-                    },
-                    callback: function (chart) {
-                        //todo: could setup events here possibly
-                        //chart.lines.dispatch.on('elementClick', function (e) {
-                        //    console.log(e);
-                        //    //alert("You've clicked on " + e.series.key + " - " + e.point.x);
-                        //});
-                        console.log("!!! lineChart callback !!!");
-                    }
-                }
-            }
-        },
-        //year charts - this would be refactored with other line chart
-        //todo: does this chart need to be special?
-        cmpPctLineAllYears: {
-            updateDataFn: updateCmpPctLineAllYears, //note similar but needs date instead of week
-            options: {
-                chart: {
-                    //type: 'discreteBarChart',
-                    type: 'lineChart',
-                    height: 400, //might be only diff (plus title)
-                    margin: {
-                        top: 20,
-                        right: 20,
-                        bottom: 40,
-                        left: 55
-                    },
-                    x: function (d) { return d.label; },
-                    y: function (d) { return d.value; },
-                    showValues: true,
-                    valueFormat: function (d) {
-                        return d3.format(',.2f')(d);
-                    },
-                    interactiveLayer: {
-                        tooltip: {
-                            headerFormatter: function (hdr) {
-                                return "Week " + hdr;
-                            }
-                        }
-                    },
- 
-                    useInteractiveGuideline: true,
-                   //forceX: [2010],
-                    //yDomain: [45, 75],
-                    xAxis: {
-                        axisLabel: 'Date',
-                        //tickFormat: function (d) {
-                        //    debugger;
-                        //    return d3.time.format("%x")(new Date(d));
-                        //    console.log(d);
-                        ////return d3.time.format("%H")(new Date(d));
-                        ////d3.time.format('%x')()
-                        //},
-                    },
-                    yAxis: {
-                        axisLabel: 'Completion %',
-                        axisLabelDistance: -10
-                    }
-                }
-            }
-        },
-        cmpPctBarAllYears: {
+        //year charts 
+        cmpPctAllYears: {
+            label: "Completion % by Year",
+            dataType: "yearly",
             updateDataFn: updateCmpPctBarAllYears,
             options: {
                 chart: {
-                    type: 'discreteBarChart',
-                    //type: 'lineChart',
-                    height: 400,
+
                     margin: {
                         top: 20,
                         right: 20,
                         bottom: 40,
                         left: 55
                     },
-                    //color: function (o, pos) { return d3.scale.category10()[pos]; },
-                    //color: function (o, pos) { return defaultOptions.allYearColors(pos); },
-                    //color: defaultOptions.allYearColors,
-                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
                     showValues: true,
-                    valueFormat: function (d) {
-                        return d3.format(',.2f')(d);
-                    },
+
+                    type: 'discreteBarChart',
+                    height: 400, //todo: slightly diff
+                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
                     interactiveLayer: {
                         tooltip: {
                             headerFormatter: function (hdr) {
@@ -257,11 +136,10 @@
                         }
                     },
                     useInteractiveGuideline: true,
-                    // forceX: [2010],
                     yDomain: [45, 75],
                     xDomain: [2011, 2012, 2013, 2014, 2015],
                     xAxis: {
-                        axisLabel: 'year'
+                        axisLabel: 'Year'
                     },
                     yAxis: {
                         axisLabel: 'Completion %',
@@ -270,24 +148,27 @@
                 }
             }
         },
+
         cmpPYAAllYears: {
+            label: "Pass Yds by Year",
+            dataType: "yearly",
             updateDataFn: updatePYABarAllYears,
             options: {
                 chart: {
-                    type: 'discreteBarChart',
-                    //type: 'lineChart',
-                    height: 400,
+                    
                     margin: {
                         top: 20,
                         right: 20,
                         bottom: 40,
                         left: 55
                     },
-                    //color: function (o, pos) { return d3.scale.category10().range()[pos]; },
-                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
                     x: function (d) { return d.label; },
                     y: function (d) { return d.value; },
                     showValues: true,
+                    //todo: note: exactly like other year except for label on y and ydomain
+                    type: 'discreteBarChart',
+                    height: 400,
+                    color: function (o, pos) { return defaultOptions.allYearColors(o.label); },
                     valueFormat: function (d) {
                         return d3.format(',.2f')(d);
                     },
@@ -299,8 +180,6 @@
                         }
                     },
                     useInteractiveGuideline: true,
-                    // forceX: [2010],
-                    //yDomain: [45, 75],
                     xDomain:[2011,2012,2013,2014,2015],
                     xAxis: {
                         axisLabel: 'year'
@@ -310,43 +189,39 @@
                         axisLabelDistance: -10
                     },
                     callback: function (c) {
-                        //todo: could setup events here possibly
-                        //debugger;
-                        //var _chart = c;
-                        //c.bars.dispatch.on('elementClick', function (e) {
-                        //    console.log(e);
-                        //    //alert("You've clicked on " + e.series.key + " - " + e.point.x);
-                        //});
                         d3.selectAll(".nv-bar").on('click', function (e) {
-                            //debugger;
                             console.log(e);
                         });
-                        //console.log("!!! lineChart callback !!!");
                     }
                 }
             }
         }
-
-        
     }
     
-    service.charts = Object.keys(chartTypeDefs);
+    service.charts = Object.keys(chartTypeDefs).map(function (key) {
+        var chartDetailObj = {
+            label: chartTypeDefs[key].label,
+            dataType: chartTypeDefs[key].dataType,
+            key: key
+        }
+        return chartDetailObj;
+    });
 
     return service;  
 
-    function getChart(statChartType) {
+    function getChart(key) {
         var chart = {
             data: [],
-            options: chartTypeDefs[statChartType].options,
-            statType: statChartType
+            options: chartTypeDefs[key].options,
+            key: key
         };
         return chart;
     }
 
 
     function updateChartData(chart, ds) {
-        chart.data = chartTypeDefs[chart.statType].updateDataFn(ds);
-        chart.options = chartTypeDefs[chart.statType].options;
+        chart.data = chartTypeDefs[chart.key].updateDataFn(ds);
+        chart.options = chartTypeDefs[chart.key].options;
         chart.api.refreshWithTimeout(5);
     }
 

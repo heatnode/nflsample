@@ -11,6 +11,10 @@
 .maxForApp {
    max-width:1400px;
 }
-/*.tooltip h3 {
+.brandlogo {
+    margin-top:8px;
 }
-.tooltip*/ 
+
+.qbImg {
+    padding:5px;
+}

@@ -4,12 +4,20 @@
     //todo: create new chart type "Summary or Overview" which will go back to 
     //the double chart view
     //also, create an option that says whether to show weekly stuff or not based on given chart
-
+    //special purpose summary entry
+    var summaryDef = {
+        label: "Summary Charts",
+        dataType: "yearly",
+        key: "cmpPctAllYears",
+        keySecondary: "cmpPYAAllYears",
+        isSummaryDef:true
+    };
     //selections
     self.selections = {
         QB: null, 
         year: '2015',
-        selectedType: 'cmpPctLine',
+        //selectedDef: 'cmpPctLine',
+        selectedDef:summaryDef,
         selectedWeek: null,
         weekDetails: null,
         showSecondaryChart: false
@@ -21,6 +29,8 @@
         years: transform.years,
         charts: charts.charts
     }
+    
+    self.options.charts.push(summaryDef);
 
     //datasets
     self.data = {
@@ -30,8 +40,8 @@
     }
 
     //charts
-    self.chart = charts.getChart(self.selections.selectedType);
-    self.chartSecondary = charts.getChart('cmpPctBarAllYears');
+    self.chart = charts.getChart(self.selections.selectedDef.key);
+    self.chartSecondary = charts.getChart('cmpPctAllYears');
 
     self.changeQB = function (qb) {
         qbData.setQB(qb).then(function (result) {
@@ -42,8 +52,9 @@
             //var sumop = transform.getOpponentSummary(self.data.fullDS);
             //todo: how  to pick all years?
             //charts.updateChart(self.chart, self.data.yearDS);
-            charts.updateChart(self.chart, self.data.yearDS);
-            charts.updateChart(self.chartSecondary, self.data.summaryDS);
+            updateCharts();
+            //charts.updateChart(self.chart, self.data.yearDS);
+            //charts.updateChart(self.chartSecondary, self.data.summaryDS);
         });
     }
 
@@ -51,16 +62,30 @@
         if (self.data.fullDS) {
             self.selections.weekDetails = null;
             self.data.yearDS = transform.gamesForYear(self.data.fullDS, year);
-            charts.updateChart(self.chart, self.data.yearDS);
-
-            charts.updateChart(self.chartSecondary, self.data.summaryDS);
+            updateCharts();
+            //charts.updateChart(self.chart, self.data.yearDS);
+            //charts.updateChart(self.chartSecondary, self.data.summaryDS);
         }
     }
 
-    self.changeChart = function (chartType) {
+    self.changeChart = function (key) {
         if (self.data.fullDS) {
-            self.chart.statType = chartType;
-            charts.updateChart(self.chart, self.data.yearDS);
+            updateCharts();
+            //self.chart.key = key;
+            //charts.updateChart(self.chart, self.data.yearDS);
+        }
+    }
+
+
+    function updateCharts() {
+        var def = self.selections.selectedDef;
+        var ds = (def.dataType == 'weekly') ? self.data.yearDS : self.data.summaryDS;
+        self.chart.key = def.key;
+        charts.updateChart(self.chart, ds);
+        if (def.isSummaryDef) {
+            self.chartSecondary.key = def.keySecondary;
+            //only uses summary data for now
+            charts.updateChart(self.chartSecondary, self.data.summaryDS);
         }
     }
     

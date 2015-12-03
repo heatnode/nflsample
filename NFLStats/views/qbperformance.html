@@ -12,6 +12,16 @@
                     </ol>
                 </div>
                 <div class="form-group">
+                    <ol ng-model="qbperf.selections.selectedDef" ng-change='qbperf.changeChart(qbperf.selections.selectedDef.key)'
+                        class="nya-bs-select" title="Select Chart type">
+                        <li nya-bs-option="o in qbperf.options.charts">
+                            <a>
+                                {{ o.label }}
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="form-group" ng-show="!qbperf.selections.selectedDef.isSummaryDef">
                     <ol ng-model="qbperf.selections.year" ng-change='qbperf.changeYear(qbperf.selections.year)' class="nya-bs-select" title="Select Year">
                         <li nya-bs-option="o in qbperf.options.years">
                             <a>
@@ -20,15 +30,7 @@
                         </li>
                     </ol>
                 </div>
-                <div class="form-group">
-                    <ol ng-model="qbperf.selections.selectedType" ng-change='qbperf.changeChart(qbperf.selections.selectedType)' class="nya-bs-select" title="Select Chart type">
-                        <li nya-bs-option="o in qbperf.options.charts">
-                            <a>
-                                {{ o }}
-                            </a>
-                        </li>
-                    </ol>
-                </div>
+
             </form>
         </div>
     </div>
@@ -59,14 +61,14 @@
                  
             </div>
         </div>
-        <div ng-class="qbperf.selections.showSecondaryChart == true ? 'col-sm-4' : 'col-sm-9'">
+        <div ng-class="qbperf.selections.selectedDef.isSummaryDef ? 'col-sm-4' : 'col-sm-9'">
             <nvd3 options="qbperf.chart.options" data="qbperf.chart.data" api="qbperf.chart.api"></nvd3>
         </div>
-        <div class="col-sm-4" ng-show="qbperf.selections.showSecondaryChart && qbperf.chartSecondary">
+        <div class="col-sm-4" ng-show="qbperf.selections.selectedDef.isSummaryDef">
             <nvd3 options="qbperf.chartSecondary.options" data="qbperf.chartSecondary.data" api="qbperf.chartSecondary.api"></nvd3>
         </div>
     </div>
-    <div class="row" ng-show="qbperf.data.fullDS">
+    <div class="row" ng-show="qbperf.selections.selectedDef.dataType == 'weekly'">
         <div class="col-sm-6">
             <h4 >Weekly Summary</h4>
             <table class="table table-responsive table-hover">
@@ -89,13 +91,13 @@
         <div class="col-sm-6">
             <div class="detailPanel center-block" ng-show="!qbperf.selections.weekDetails">
                 <!--todo:tidy up-->
-                <h4 class="text-center">Select a week to view details</h4>
+                <h4 class="text-center">Select a week from summary table to view details</h4>
             </div>
             <div class="panel panel-default detailPanel center-block" ng-show="qbperf.selections.weekDetails">
                 <!-- Default panel contents -->
                 <div class="panel-heading clearfix">
                     <div class="col-sm-2">
-                        <img class="img-responsive img-circle center-block" ng-src="{{qbperf.selections.weekDetails.teamImage || ''}}" alt="" />
+                        <img class="img-responsive img-circle center-block qbImg" ng-src="{{qbperf.selections.weekDetails.teamImage || ''}}" alt="" />
                     </div>
                     <div class="col-sm-8 text-center">
                         <h4>{{qbperf.selections.weekDetails.qbName}}</h4>
